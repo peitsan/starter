@@ -5,11 +5,11 @@
 
 ## State (last 5 lines)
 
-- M0/M1/M2 完成：优先级统一（RFC-001 §4.5，默认 2）+ daemon deps 修复 + daemon dbPath 修复
-- M1：@starter/ipc-client 实装（10/10）+ @starter/core/registry 命令注册器 + CLI/MCP 写操作走 daemon IPC（fallback 本地，兼容旧 daemon 裸 boolean）
-- M2：MCP 扩到 27 tools + 6 resources + 5 prompts + yes 确认流（RFC-001 §4.6）+ SSE transport（127.0.0.1:7812 实测）+ import/export（RFC §4.9）
-- 单测 core 91 + daemon 32 + ipc-client 10 + ui 14 + cli 9 + mcp 3 = 159/159 全过，typecheck 0 错；MCP e2e（真实起 server）27/27 PASS
-- 已更新 docs/AGENT_API.md（27 tools/6 resources/5 prompts/daemon IPC 路由）；下一批：Tauri bundle + 部署新 daemon 二进制 + 20-run trim + TaskScheduler/Service 扫描
+- TaskScheduler 扫描完成：schtasks.exe /v /fo CSV 解析 + GBK 解码（兼容中文），按登录/系统启动/空闲触发器过滤，风险分类（critical/normal/recommend_off），实装于 WindowsScanner.scan()
+- 单测 core 105/105 全过（含 parseCsvLine / isStartupTrigger 中英文 / classifyTaskRisk / isTaskEnabled / 真实 schtasks 集成测）
+- CLI scan 实扫本机：16 个 TaskScheduler 项入库（Adobe/OneDrive/WPS/ASUS/PowerShell 脚本等）
+- 上一批：M0-M2 完成（优先级统一、ipc-client、registry、CLI/MCP 走 daemon、MCP 27 tools/6 res/5 prompts/SSE/import-export）
+- 下一批：Service 扫描 + 20-run trim + 部署新 daemon 二进制
 
 ## 根目录白名单
 

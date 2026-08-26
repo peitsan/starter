@@ -107,6 +107,7 @@ import {
   parseCsvLine,
   isStartupTrigger,
   classifyTaskRisk,
+  isTaskEnabled,
   scanTaskScheduler,
 } from '../src/index.js';
 
@@ -126,17 +127,35 @@ describe('parseCsvLine', () => {
 });
 
 describe('isStartupTrigger', () => {
-  it('accepts logon / system startup / idle', () => {
+  it('accepts logon / system startup / idle (English)', () => {
     assert.equal(isStartupTrigger('At logon'), true);
     assert.equal(isStartupTrigger('At system startup'), true);
     assert.equal(isStartupTrigger('At idle'), true);
     assert.equal(isStartupTrigger('On idle'), true);
   });
+  it('accepts Chinese schedule types (GBK-decoded)', () => {
+    assert.equal(isStartupTrigger('登录时'), true);
+    assert.equal(isStartupTrigger('系统启动时'), true);
+    assert.equal(isStartupTrigger('空闲时'), true);
+  });
   it('rejects daily / weekly / one-time', () => {
     assert.equal(isStartupTrigger('Daily'), false);
-    assert.equal(isStartupTrigger('Weekly'), false);
+    assert.equal(isStartupTrigger('每周'), false);
     assert.equal(isStartupTrigger('One time only'), false);
     assert.equal(isStartupTrigger(''), false);
+  });
+});
+
+describe('isTaskEnabled', () => {
+  it('accepts English and Chinese enabled states', () => {
+    assert.equal(isTaskEnabled('Enabled'), true);
+    assert.equal(isTaskEnabled('已启用'), true);
+    assert.equal(isTaskEnabled('Ready'), true);
+  });
+  it('rejects disabled states', () => {
+    assert.equal(isTaskEnabled('Disabled'), false);
+    assert.equal(isTaskEnabled('已禁用'), false);
+    assert.equal(isTaskEnabled(''), false);
   });
 });
 

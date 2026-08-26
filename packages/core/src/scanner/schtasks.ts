@@ -14,7 +14,7 @@ import { fingerprint, parseCommand } from './command.js';
 const execFileAsync = promisify(execFile);
 
 /** 将 GBK Buffer 解码为 UTF-8 字符串（中文 Windows schtasks 输出用 GBK） */
-function decodeGbk(buf: Buffer): string {
+export function decodeGbk(buf: Buffer): string {
   try {
     return new TextDecoder('gbk').decode(buf);
   } catch {
@@ -88,13 +88,14 @@ export function isStartupTrigger(type: string): boolean {
   const keyword =
     t.includes('logon') ||
     t.includes('登录') ||
+    t.includes('登陆') || // 中文实际输出"登陆时"
     t.includes('system startup') ||
     t.includes('system startup time') ||
     t.includes('启动') || // 系统启动时 / 启动时
     t.includes('at idle') ||
     t.includes('on idle') ||
     t === 'idle' ||
-    t.includes('空闲'); // 空闲时
+    t.includes('空闲'); // 在空闲时间
   // 排除"每日/每周/一次性"等定时类（Daily/Weekly/One time 不在上述关键词里，天然被排除）
   return keyword;
 }
@@ -122,6 +123,12 @@ export function classifyTaskRisk(
     return 'normal';
   }
   return 'recommend_off';
+}
+
+/** 判断任务是否启用（兼容中英文 state 值） */
+export function isTaskEnabled(state: string): boolean {
+  const s = state.toLowerCase();
+  return s === 'enabled' || s === '已启用' || s === 'ready';
 }
 
 /**
@@ -174,7 +181,7 @@ export async function scanTaskScheduler(): Promise<ScannedItem[]> {
       args: parsed.args,
       source: 'TaskScheduler',
       source_path: fullPath,
-      enabled: state.toLowerCase() === 'enabled',
+      enabled: isTaskEnabled(state),
       risk: classifyTaskRisk(fullPath, taskToRun),
       vendor: null,
       scanned_at: now,
