@@ -1,22 +1,19 @@
 #!/usr/bin/env node
-// starter CLI — placeholder; real commands land in subsequent PRs.
+// starter CLI entry
 import { Command } from 'commander';
+import { registerCommands } from './commands.js';
 
 const program = new Command();
 program
   .name('starter')
-  .description('Starter — Windows startup manager (CLI)')
-  .version('0.0.0');
+  .description('Starter — modern Windows startup manager')
+  .version('0.0.0')
+  .option('--json', 'output JSON (machine-readable)')
+  .option('--no-color', 'disable ANSI colors');
 
-program
-  .command('hello')
-  .description('smoke test command')
-  .option('--name <name>', 'who to greet', 'world')
-  .action((opts: { name: string }) => {
-    console.info(`hello, ${opts.name}!`);
-  });
+registerCommands(program);
 
 program.parseAsync(process.argv).catch((err: unknown) => {
-  console.error(err instanceof Error ? err.message : String(err));
+  process.stderr.write(`fatal: ${err instanceof Error ? err.message : String(err)}\n`);
   process.exit(1);
 });

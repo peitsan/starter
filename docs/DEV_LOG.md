@@ -5,10 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 3 完成：SQLite 仓储（schema + 6 表 + op_log 审计）
-- 26 单测全过；环检测正方向重写
-- 踩坑：better-sqlite3 11 LIKE 参数化在含反斜杠 pattern 下行为错（绕开用 INSTR+toLowerCase）
-- 下一批：F2 IPC client + reg.exe add/delete 写注册表 + CLI scan/list/show/enable/disable
+- Batch 4 完成：F2 启停 + CLI 8 命令全跑通（真机验证）
+- Controller + winreg + 8 个 CLI（scan/list/show/enable/disable/set-delay/set-priority/doctor）
+- 本机 scan 35 项，OneDrive delay/priority 实改成功
+- 下一批：Batch 5 — F3~F6 调度引擎（DAG + IO 节流 + 并发）
 
 ## 根目录白名单
 
