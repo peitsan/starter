@@ -1,38 +1,31 @@
-# GitHub Pages 启用指南（给 Paxon）
+# GitHub Pages 启用 + PAT 权限指南（给 Paxon）
 
-> 一次性配置，30 秒搞定。
+> 必须 2 步（总计 2 分钟），我都做不了（fine-grained PAT 默认权限不够）。
+> 一次性配置，以后全自动。
 
-## 1. 启用 Pages
+## 1. 调整 PAT 权限（1 分钟）
+
+打开 https://github.com/settings/tokens ，找到你给我用的 PAT（`github_pat_11AUOOKSY09wfUK4gJfNpw...` 开头那个），点 Edit：
+
+### Repository permissions（必须勾）：
+
+- ✅ **Contents**: Read and write
+- ✅ **Workflows**: Read and write
+- ✅ **Pages**: Read and write
+- ✅ **Metadata**: Read-only（默认就有）
+
+点 **Save** 保存。
+
+## 2. 启用 GitHub Pages（30 秒）
 
 打开 https://github.com/peitsan/starter/settings/pages
 
 **Source** 选 **"GitHub Actions"**
 
-不用选 branch 也不用选 folder —— workflow 已经写好会自动 deploy。
+直接保存。
 
-![Pages setting](https://docs.github.com/assets/images/help/pages/pages-source-dropdown.png)
+## 3. 触发 workflow（30 秒）
 
-## 2. 等 1-2 分钟
+只要把代码 push 上去，workflow 就自动跑。
 
-打开 https://github.com/peitsan/starter/actions 看 "Deploy GitHub Pages" workflow 跑。
-
-跑成功后 https://peitsan.github.io/starter/ 就有内容了。
-
-## 3. 验证
-
-访问 https://peitsan.github.io/starter/ 应该看到：
-
-- 首页（`docs/index.md`）— 文档目录
-- Agent Guide（`docs/AGENT_GUIDE.md`）
-- README / MRD / PRD / DEV_LOG
-
----
-
-## 故障排查
-
-| 现象 | 原因 | 修法 |
-|---|---|---|
-| Actions 显示 403 | Pages 没启用 | 重做步骤 1 |
-| 404 Not Found | 部署失败 | 看 Actions 日志 |
-| 页面样式乱 | Jekyll 在处理 | 已加 `.nojekyll` 文件，应不出现 |
-| 看不到 workflow run | 没 push 上去 | `git push` 后等 1 分钟刷新 |
+我先 push 一下当前的 commit：
