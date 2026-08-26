@@ -5,9 +5,9 @@
 
 ## State (last 5 lines)
 
-- 脚手架就绪 (lint/typecheck/test 全绿)
-- pnpm 9.12.3 + workspace:* 协议
-- 下一批：F1 扫描（注册表 Run + 启动文件夹）
+- Batch 2 完成：F1 启动项扫描跑通（35 项，本机实测）
+- registry via reg.exe + fs.readdir；纯 JS，可 unit-test
+- 下一批：F2 启停 + SQLite 仓储（写注册表 + DB CRUD）
 
 ## 根目录白名单
 
@@ -57,3 +57,29 @@ tsconfig.json
 - `pnpm run lint` ❌ → 修：补 `@eslint/js` → ✅
 - 改动：4 个 package.json 内部依赖改 `workspace:*`；新增 `@eslint/js` devDep
 - 下一步：Batch 2 — F1 启动项扫描（注册表 Run/RunOnce + 启动文件夹）
+
+## Batch 2 (2026-08-26)
+
+### 目标
+- F1 启动项扫描器：注册表 Run/RunOnce + 启动文件夹
+- 跨平台接口（Scanner interface），便于将来 macOS/Linux 扩展
+- 单测覆盖 parseRegQuery / parseCommand / fingerprint
+
+### 计划改动
+- 新增 `packages/core/src/scanner/{types,command,windows,detect,index}.ts`
+- 新增 `packages/core/tests/scanner.test.ts`（12 个 case）
+- 新增 `packages/core/bin/scan-smoke.mts`（本机真跑演示）
+
+### 关键设计
+- 注册表读走 `reg.exe query` 而非 ffi-napi：零原生依赖
+- 解析器独立成 `parseRegQuery` 纯函数，方便单测
+- 启动文件夹过滤 .lnk/.bat/.cmd/.exe/.vbs/.js/.jar
+- 风险分级（critical / normal / recommend_off）粗粒度识别 Microsoft 系
+
+### 结果
+- ✅ `pnpm -r typecheck` 0 错
+- ✅ `pnpm -r test` 12/12 pass（含 `STARTER_RUN_REG_SCAN=1` 真 reg.exe）
+- ✅ `pnpm --filter @starter/core exec tsx bin/scan-smoke.mts` → **本机扫到 35 项**（OneDrive / Steam / Sunlogin / Clash / DeepSeek / Ollama / Thunder / BaiduYun / GoogleDrive / 有道云...）
+- ❌ 遇到 2 个坑：(1) raw string `r'..\..'` 在 esbuild 报错 → 改 `'..\\..'`；(2) `parseCommand(...).then(items => results.push(...items))` 返回 number，Promise<void> 类型不匹配 → 加 `{ }` 块包成 void
+- ❌ 测试期望写错：原想测 `\"` 转义但 tokenizer 是 Windows CMD 风格 `""` → 改测试
+- 下一步：Batch 3 — F2 启/停（写注册表）+ SQLite 仓储

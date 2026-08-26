@@ -17,7 +17,8 @@ export default [
       '**/Generated Files (Local)/**',
       '**/Bundle/**',
       '**/artifacts/**',
-      '**/bin/**',
+      // 仅忽略 native 编译产物 bin/；TS smoke 脚本走 packages/*/bin/*.mts 不在此规则
+      'packages/*/bin/obj/**',
       '**/obj/**',
       '.husky/**',
       'CHANGELOG.md',
@@ -48,7 +49,7 @@ export default [
         'error',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
-      'eqeqeq': ['error', 'always', { null: 'ignore' }],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
       'prefer-const': 'error',
       'no-var': 'error',
       'object-shorthand': ['error', 'always'],
