@@ -5,9 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 2 完成：F1 启动项扫描跑通（35 项，本机实测）
-- registry via reg.exe + fs.readdir；纯 JS，可 unit-test
-- 下一批：F2 启停 + SQLite 仓储（写注册表 + DB CRUD）
+- Batch 3 完成：SQLite 仓储（schema + 6 表 + op_log 审计）
+- 26 单测全过；环检测正方向重写
+- 踩坑：better-sqlite3 11 LIKE 参数化在含反斜杠 pattern 下行为错（绕开用 INSTR+toLowerCase）
+- 下一批：F2 IPC client + reg.exe add/delete 写注册表 + CLI scan/list/show/enable/disable
 
 ## 根目录白名单
 
