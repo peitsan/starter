@@ -109,6 +109,12 @@ drafts/
 *.zip
 !docs/**/*.zip
 
+# ===== Docs site build artifacts (generated, not source) =====
+docs/index.html
+docs/assets/
+docs/content/
+docs/audit-traceability.csv
+
 # ===== Sensitive / Credentials =====
 *.pem
 *.key
