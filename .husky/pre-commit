@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 触发 lint-staged，对暂存文件做 prettier + eslint
+npx lint-staged

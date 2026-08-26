@@ -1,0 +1,25 @@
+{
+  "name": "@starter/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starter core — domain models, SQLite repository, scheduling logic.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test --import tsx tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.7.5",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

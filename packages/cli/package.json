@@ -1,0 +1,31 @@
+{
+  "name": "@starter/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starter CLI — 命令行入口；可作为独立 npm 包发布。",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "starter": "./dist/index.js"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "test": "node --test --import tsx tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@starter/core": "*",
+    "@starter/ipc-client": "*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

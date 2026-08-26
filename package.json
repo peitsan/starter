@@ -1,0 +1,83 @@
+{
+  "name": "starter",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starter — modern Windows startup manager with IO-aware scheduling, CLI, and MCP server (RN/Node.js/C#).",
+  "license": "MIT",
+  "author": "Paxon",
+  "engines": {
+    "node": ">=20.0.0 <23 || >=23.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.9.3",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
+    "prepare": "husky || true",
+    "commit": "git-cz",
+    "release": "release-it",
+    "release:dry": "release-it --dry-run --no-npm --no-github"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@release-it/conventional-changelog": "^8.0.1",
+    "@types/node": "^22.7.5",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "release-it": "^17.6.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.10.0"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "release-it": {
+    "git": {
+      "requireBranch": "main",
+      "requireCleanWorkingDir": true,
+      "requireCommits": true,
+      "commitMessage": "chore(release): v${version}",
+      "tagName": "v${version}",
+      "tagAnnotation": "Release v${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}",
+      "autoGenerate": true,
+      "draft": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "conventionalcommits",
+        "infile": "CHANGELOG.md"
+      }
+    }
+  }
+}

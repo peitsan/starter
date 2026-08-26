@@ -1,0 +1,30 @@
+{
+  "name": "@starter/mcp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starter MCP Server — exposes CLI capabilities to LLM agents over MCP (stdio / SSE).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "starter-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "test": "node --test --import tsx tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@starter/cli": "*",
+    "@starter/core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

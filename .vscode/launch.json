@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "starter cli (dev)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/cli/src/index.ts",
+      "runtimeExecutable": "tsx",
+      "runtimeArgs": [],
+      "args": ["hello", "--name", "paxon"],
+      "cwd": "${workspaceFolder}/packages/cli",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "starter mcp (dev, stdio)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/mcp/src/index.ts",
+      "runtimeExecutable": "tsx",
+      "runtimeArgs": [],
+      "cwd": "${workspaceFolder}/packages/mcp",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "current file (tsx)",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "runtimeExecutable": "tsx",
+      "runtimeArgs": [],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "compounds": []
+}

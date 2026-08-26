@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "lint",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "lint:fix",
+      "type": "npm",
+      "script": "lint:fix",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "format",
+      "type": "npm",
+      "script": "format",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "typecheck",
+      "type": "npm",
+      "script": "typecheck",
+      "problemMatcher": ["$tsc"],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "test",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "release (dry-run)",
+      "type": "npm",
+      "script": "release:dry",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+# Normalize line endings for cross-platform collaboration
+*                 text=auto eol=lf
+
+# Shell scripts must use LF
+*.sh              text eol=lf
+*.bash            text eol=lf
+
+# Windows scripts must use CRLF
+*.bat             text eol=crlf
+*.cmd             text eol=crlf
+*.ps1             text eol=crlf
+
+# Doc files keep LF; markdown uses trailing space for line break
+*.md              text eol=lf
+*.markdown        text eol=lf
+
+# YAML and JSON
+*.yml             text eol=lf
+*.yaml            text eol=lf
+*.json            text eol=lf
+
+# Native C/C++/C#: keep CRLF on Windows-friendly defaults
+*.cs              text eol=crlf
+*.csproj          text eol=crlf
+*.sln             text eol=crlf
+*.cpp             text eol=lf
+*.h               text eol=lf
+*.hpp             text eol=lf
+
+# Treat archives as binary
+*.zip             binary
+*.tar             binary
+*.gz              binary
+*.tgz             binary
+*.7z              binary
+*.rar             binary
+*.exe             binary
+*.dll             binary
+*.pdb             binary
+*.so              binary
+*.dylib           binary
+*.appx            binary
+*.appxbundle      binary
+*.msix            binary
+*.msixbundle      binary
+*.png             binary
+*.jpg             binary
+*.jpeg            binary
+*.gif             binary
+*.webp            binary
+*.ico             binary
+*.icns            binary
+*.pdf             binary
+
+# Linguist overrides — 让 GitHub 自动按用途分类
+docs/*            linguist-documentation
+*.spec.ts         linguist-generated=false
+*.test.ts         linguist-generated=false

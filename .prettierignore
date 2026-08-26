@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+out
+coverage
+*.tsbuildinfo
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+CHANGELOG.md
+docs
+.husky
+.github
+.vscode
+.idea

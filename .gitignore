@@ -1,0 +1,118 @@
+# ===== Node / npm =====
+node_modules/
+.npm/
+.pnpm-store/
+yarn-error.log
+yarn.lock
+.pnpm-debug.log*
+package-lock.json.bak
+
+# ===== Build artifacts =====
+dist/
+build/
+out/
+*.tsbuildinfo
+.next/
+.nuxt/
+.cache/
+coverage/
+*.lcov
+.turbo/
+.eslintcache
+.stylelintcache
+
+# ===== Native (C# / C++) =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.nupkg
+*.snupkg
+artifacts/
+NativeBindings/bin/
+NativeBindings/obj/
+NativeBindings/x64/
+NativeBindings/x86/
+NativeBindings/ARM64/
+NativeBindings/.vs/
+
+# ===== RN / RNW =====
+.expo/
+.expo-shared/
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# ===== React Native Windows =====
+**/Generated Files/**
+**/Generated Files (Local)/**
+**/Generated Files (Local Test)/**
+**/Generated Files (Staging)/
+**/Generated Files (Staging Test)/
+**/Generated Files (Production)/
+**/Generated Files (Production Test)/
+**/Bundle/
+**/*.appx
+**/*.appxbundle
+**/*.appxupload
+**/*.appxsym
+**/*.msix
+**/*.msixbundle
+
+# ===== IDE =====
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/*.code-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== OS / Misc =====
+*.log
+logs/
+*.local
+.env
+.env.*
+!.env.example
+.envrc
+.tmp/
+tmp/
+.temperature/
+.session_tmp/
+
+# ===== Testing =====
+.nyc_output/
+junit.xml
+test-results/
+playwright-report/
+.playwright/
+allure-results/
+
+# ===== Releases =====
+releases/
+drafts/
+*.blockmap
+*.zip
+!docs/**/*.zip
+
+# ===== Sensitive / Credentials =====
+*.pem
+*.key
+*.crt
+secrets/
+.credentials/
+
+# ===== Husky / git =====
+.husky/_/
+.husky/.gitignore

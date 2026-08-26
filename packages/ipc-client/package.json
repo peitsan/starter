@@ -1,0 +1,22 @@
+{
+  "name": "@starter/ipc-client",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starter IPC client — talks to the elevated main process over HTTP (127.0.0.1:7811).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@starter/core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  }
+}
