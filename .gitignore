@@ -109,10 +109,7 @@ drafts/
 *.zip
 !docs/**/*.zip
 
-# ===== Docs site build artifacts (generated, not source) =====
-docs/index.html
-docs/assets/
-docs/content/
+# ===== Docs audit artifact (generated) =====
 docs/audit-traceability.csv
 
 # ===== Sensitive / Credentials =====

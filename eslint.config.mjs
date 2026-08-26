@@ -22,6 +22,8 @@ export default [
       '**/obj/**',
       '.husky/**',
       'CHANGELOG.md',
+      // 静态文档站浏览器端脚本（document/window/CDN 全局），不属 TS workspace lint
+      'docs/assets/**',
     ],
   },
   js.configs.recommended,
