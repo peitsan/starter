@@ -5,10 +5,9 @@
 
 ## State (last 5 lines)
 
-- Batch 6 完成：MCP Server (5 tool + 1 resource + 1 prompt) 真机跑通
-- JSON-RPC over stdio；Cursor/Claude Desktop 可一键接入
-- 顺手修 better-sqlite3 list 的 named-param bug（改 positional `?`）
-- 下一批：Batch 7 — release v0.1.0 + GitHub release + 收尾
+- Batch 7 完成：v0.1.0 已发布（tag + GitHub Release + 所有 commit 推送）
+- DoD 全部达成：74/74 单测，typecheck/lint 0 错，根目录白名单
+- 下一批：MVP 完成 → 标记 goal complete，等待 Paxon 决定是否进入 v0.2（macOS/Linux scanner / HKLM 守护进程 / 时间线 UI）
 
 ## 根目录白名单
 
