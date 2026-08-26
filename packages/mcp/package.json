@@ -1,6 +1,6 @@
 {
   "name": "@starter/mcp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Starter MCP Server — exposes CLI capabilities to LLM agents over MCP (stdio / SSE).",
   "type": "module",

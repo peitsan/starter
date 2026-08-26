@@ -1,6 +1,6 @@
 {
   "name": "@starter/ipc-client",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Starter IPC client — talks to the elevated main process over HTTP (127.0.0.1:7811).",
   "type": "module",
