@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Starter — Windows 启动项管理器</title>
+  <meta name="description" content="Starter: modern Windows startup manager with IO-aware scheduling, CLI, and MCP server (LLM Agent interface)." />
+  <meta property="og:title" content="Starter Documentation" />
+  <meta property="og:description" content="Modern Windows startup manager with IO-aware scheduling, CLI, and MCP server." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css" id="hljs-light" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" id="hljs-dark" disabled />
+  <link rel="stylesheet" href="assets/app.css" />
+</head>
+<body>
+  <div class="layout">
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="icon-btn" id="menu-toggle" aria-label="Toggle menu" title="菜单">☰</button>
+      <a class="brand" href="#/human/overview">
+        <span class="brand-logo">🚀</span>
+        <span class="brand-name">Starter</span>
+      </a>
+      <nav class="topnav">
+        <a href="#/human/overview">文档</a>
+        <a href="https://github.com/peitsan/starter" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+      <div class="topbar-right">
+        <!-- Version selector -->
+        <div class="select-wrap">
+          <select id="version-select" title="版本" aria-label="版本">
+            <option value="0.1.x">v0.1.x</option>
+            <option value="latest">latest</option>
+          </select>
+        </div>
+        <!-- Human / Agent mode toggle -->
+        <div class="mode-toggle" role="tablist" aria-label="文档模式">
+          <button class="mode-btn active" data-mode="human" role="tab" aria-selected="true">👤 Human</button>
+          <button class="mode-btn" data-mode="agent" role="tab" aria-selected="false">🤖 Agent</button>
+        </div>
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="主题">🌙</button>
+      </div>
+    </header>
+
+    <div class="body">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      </aside>
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+      <!-- Content -->
+      <main class="content" id="content">
+        <div class="loading" id="loading">加载中…</div>
+        <article class="markdown-body" id="markdown"></article>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

@@ -551,4 +551,4 @@ server.setRequestHandler(GetPromptRequestSchema, async (req) => {
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-process.stderr.write('[starter-mcp] connected via stdio (16 tools, 3 resources, 3 prompts)\n');
+process.stderr.write('[starter-mcp] connected via stdio (17 tools, 3 resources, 3 prompts)\n');
