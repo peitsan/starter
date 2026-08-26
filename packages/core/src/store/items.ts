@@ -156,6 +156,7 @@ export class ItemRepository {
     }
     const exists = this.get(id);
     if (!exists) return false;
+    const prev = exists.delay_ms;
     this.db
       .prepare('UPDATE startup_item SET delay_ms = ?, updated_at = ? WHERE id = ?')
       .run(Math.floor(delayMs), Date.now(), id);
@@ -168,7 +169,7 @@ export class ItemRepository {
         actor,
         'set_delay',
         id,
-        JSON.stringify({ delay_ms: Math.floor(delayMs) }),
+        JSON.stringify({ prev, next: Math.floor(delayMs) }),
         'ok',
       );
     return true;
@@ -180,6 +181,7 @@ export class ItemRepository {
     }
     const exists = this.get(id);
     if (!exists) return false;
+    const prev = exists.priority;
     this.db
       .prepare('UPDATE startup_item SET priority = ?, updated_at = ? WHERE id = ?')
       .run(priority, Date.now(), id);
@@ -187,7 +189,7 @@ export class ItemRepository {
       .prepare(
         'INSERT INTO op_log (at, actor, action, target, args_json, result) VALUES (?, ?, ?, ?, ?, ?)',
       )
-      .run(Date.now(), actor, 'set_priority', id, JSON.stringify({ priority }), 'ok');
+      .run(Date.now(), actor, 'set_priority', id, JSON.stringify({ prev, next: priority }), 'ok');
     return true;
   }
 

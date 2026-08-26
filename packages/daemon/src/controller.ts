@@ -53,7 +53,10 @@ export class RpcController {
       }
       case 'show': {
         const id = String(params.id ?? '');
-        return this.core.show(id);
+        const item = this.core.show(id);
+        if (!item) return null;
+        const deps = this.core.listDependencies(id);
+        return { ...item, dependencies: deps };
       }
       case 'enable': {
         const id = String(params.id ?? '');
@@ -97,6 +100,28 @@ export class RpcController {
       }
       case 'service_status': {
         return await this.serviceStatus();
+      }
+      case 'add_dependency': {
+        const id = String(params.id ?? '');
+        const dep = String(params.depends_on ?? '');
+        return this.core.addDependency(id, dep);
+      }
+      case 'remove_dependency': {
+        const id = String(params.id ?? '');
+        const dep = String(params.depends_on ?? '');
+        return { ok: this.core.removeDependency(id, dep), id, depends_on: dep };
+      }
+      case 'list_dependencies': {
+        const id = String(params.id ?? '');
+        return { ok: true, ...this.core.listDependencies(id) };
+      }
+      case 'apply_preset': {
+        const rules = Array.isArray(params.rules) ? params.rules : [];
+        return this.core.applyPreset(rules as Parameters<typeof this.core.applyPreset>[0]);
+      }
+      case 'undo_last_change': {
+        const limit = Number(params.limit ?? 5);
+        return await this.core.undoLast(limit);
       }
       default:
         throw new Error(`unknown method: ${method}`);

@@ -5,10 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 11 完成：时间线 SVG + 3 tabs (items/timeline/settings) + 托盘 quick actions + 服务/IO 状态
-- starter-ui.exe 6.37MB release build 真机跑通
-- 112/112 单测，typecheck/lint 0 错
-- 下一批：Batch 12 = Tauri bundle (.msi/.nsis) + GitHub Actions 自动打包
+- Batch 12 完成：Agent Settings 完整化 — MCP 17 tools + 3 resources + 3 prompts + 防环 DAG + undo 撤销 + op_log 审计
+- core 86 + daemon 30 + ui 14 + cli 9 + mcp 3 = 142/142 单测全过，typecheck/lint 0 错
+- 新增 docs/AGENT_API.md（Agent/MCP API 完整文档）
+- 下一批：Batch 13 = Tauri bundle (.msi/.nsis) + GitHub Actions 自动打包 + i18n 收尾
 
 ## 根目录白名单
 
@@ -84,3 +84,30 @@ tsconfig.json
 - ❌ 遇到 2 个坑：(1) raw string `r'..\..'` 在 esbuild 报错 → 改 `'..\\..'`；(2) `parseCommand(...).then(items => results.push(...items))` 返回 number，Promise<void> 类型不匹配 → 加 `{ }` 块包成 void
 - ❌ 测试期望写错：原想测 `\"` 转义但 tokenizer 是 Windows CMD 风格 `""` → 改测试
 - 下一步：Batch 3 — F2 启/停（写注册表）+ SQLite 仓储
+
+## Batch 12 (2026-08-26) — Agent Settings / MCP 完整化
+
+### 目标
+- 服务流出 MCP，让外部 Agent 能完整操作排程表（不再只有 5 个基础 tool）
+
+### 实装
+- store 新增 2 repo：
+  - `packages/core/src/store/dependencies.ts` — DependencyRepository（add/remove/listFor/防环 DFS）
+  - `packages/core/src/store/op-log.ts` — OpLogRepository（write/list/listUndoable）
+- controller 新增方法：addDependency/removeDependency/listDependencies/applyPreset/undoLast/scheduleRun/timeline/ioStatus/serviceStatus
+- **op_log 统一**：写操作全部走 items 层（setEnabled/setDelay/setPriority/addDependency/removeDependency 自带审计日志，含 prev/next），controller 不再重复写
+- MCP 扩到 **17 tools + 3 resources + 3 prompts**：
+  - 新增 show/set_priority/add_dependency/remove_dependency/list_dependencies/apply_preset/undo_last_change/schedule_run/doctor/io_status/service_status/timeline
+  - resources: starter://items / ://timeline / ://doctor
+  - prompts: optimize_for_io / diagnose_slow_boot / safe_disable_plan
+- daemon RPC + Tauri 都加了新方法绑定
+- docs/AGENT_API.md 新建；AGENT_GUIDE.md 更新到 17 tools
+
+### 结果
+- ✅ core 86 + daemon 30 + ui 14 + cli 9 + mcp 3 = **142/142** 全过
+- ✅ typecheck 0 / lint 0 / root clean
+- ✅ MCP dist 验证含全部新 tool/resource/prompt
+- 撤销机制：undoLast 反向执行最近 N 条（set_delay 恢复 prev，disable↔enable，add_dep↔rm_dep）
+
+### 下一批
+- Batch 13 = Tauri bundle (.msi/.nsis) + GitHub Actions 自动打包 + i18n 收尾（真 EXE 验证多语言）

@@ -42,29 +42,43 @@
 }
 ```
 
-接入后你有 **5 个 tool + 1 个 resource + 1 个 prompt**。
+接入后你有 **17 个 tool + 3 个 resource + 3 个 prompt**。
 
 ### 3.1 工具清单
 
 | Tool 名称 | 作用 | 必填参数 |
 |---|---|---|
 | `scan_startup_items` | 重新扫描所有启动项并入库 | – |
-| `list_startup_items` | 列表查询 | – |
+| `list_startup_items` | 列表查询（支持 source/enabled/risk/search 过滤） | – |
+| `show_startup_item` | 单项详情 + 依赖边 | `id` |
 | `enable_startup_item` | 启用（写注册表，HKCU 立即生效；HKLM 需提权） | `id` |
 | `disable_startup_item` | 禁用 | `id` |
 | `set_delay` | 设延迟（0 = 立即，24h 上限） | `id`, `delay_ms` |
-
-**可选参数**（`list_startup_items`）：`source` / `enabled` / `risk` / `search`
+| `set_priority` | 设优先级（0-5） | `id`, `priority` |
+| `add_dependency` | 加启动顺序边（自动防环） | `id`, `depends_on` |
+| `remove_dependency` | 删启动顺序边 | `id`, `depends_on` |
+| `list_dependencies` | 列出依赖边 | `id` |
+| `apply_preset` | 按 name 匹配批量改 delay/priority/enabled | `rules` |
+| `undo_last_change` | 回滚最近 N 条可逆变更 | `limit?` |
+| `schedule_run` | 跑一次调度（默认模拟；`real:true` 真起进程） | `real?`, `simulated_ms?` |
+| `doctor` | 自检（数量/config/平台） | – |
+| `io_status` | 采样磁盘 IO（idle%/队列） | – |
+| `service_status` | 查询 Windows 服务状态 | – |
+| `timeline` | 最近一次 run 的事件 | `limit?` |
 
 ### 3.2 Resource
 
 - `starter://items` — 所有启动项的完整 JSON
+- `starter://timeline` — 最近一次 run 的事件
+- `starter://doctor` — 自检报告
 
 ### 3.3 Prompt
 
-- `optimize_for_io` — 自动基于当前配置生成优化建议
+- `optimize_for_io` — 基于当前配置生成低 IO 优化建议
+- `diagnose_slow_boot` — 慢启动瓶颈分析
+- `safe_disable_plan` — 安全禁用计划（跳过 Microsoft/驱动）
 
-### 3.4 自然语言调用的 6 个典型场景
+### 3.4 自然语言调用的 8 个典型场景
 
 ```
 1. "扫一下我电脑的启动项"
@@ -73,21 +87,28 @@
 2. "把所有 IO 高的启动项延迟 60 秒"
    → call list_startup_items(filter=risk=recommend_off)
    → 对每条 call set_delay(id, 60000)
+   → 或 apply_preset([{match:"xxx", delay_ms:60000}])
 
 3. "OneDrive 必须第一个起，VS Code 等它完成再起"
-   → call add_dependency（待 v0.2）
+   → call add_dependency(id=vs-code-id, depends_on=onedrive-id)
 
 4. "把 XXX 关掉"
    → call list_startup_items(search=XXX) 拿 id
    → call disable_startup_item(id)
 
 5. "我启动太慢了，帮我优化"
-   → call get_prompt(optimize_for_io) 看建议
-   → 根据建议批量调 set_delay
+   → call get_prompt(diagnose_slow_boot) 看建议
+   → 根据建议批量调 apply_preset
 
-6. "现在磁盘 IO 怎么样？"
-   → read starter://items 看最近一次扫描结果
-   → 调本机 PerformanceCounter（如需）
+6. "反悔，撤销我上次的改动"
+   → call undo_last_change(limit=3)
+
+7. "现在磁盘 IO 怎么样？"
+   → call io_status / read starter://doctor
+
+8. "模拟跑一次调度看效果"
+   → call schedule_run(simulated_ms=3000)
+   → read starter://timeline
 ```
 
 ### 3.5 重要约束
@@ -193,13 +214,15 @@ console.log(`paused ${result.paused_count} times`);
 
 ## 9. 注意事项
 
-1. **不要关 critical 项**（会破坏系统安全）
+1. **不要关 critical 项**（会破坏系统安全）— `enable/disable` 对 critical 返回 `protected`
 2. **修改注册表前先 scan + show 确认**（避免误操作）
-3. **HKLM 项当前只能读不能写**（v0.2 才支持）
+3. **HKLM 项写操作需要管理员权限**（返回 `elevation_required`）
 4. **延迟单位是毫秒**（不是秒）
 5. **5s+ 延迟的项需要先 `set_delay` 再让 Starter 接管**（系统不读我们的 SQLite）
-6. **真正的延迟启动**需要在登录时由守护进程拉起 — v0.1 调度是**模拟**的（写 `startup_run_event` 表）；真起进程等 v0.2
-7. **要审计时**：`SELECT * FROM op_log ORDER BY id DESC LIMIT 20`
+6. **`schedule_run` 默认模拟**（写 `startup_run_event` 表）；`real:true` 真起进程（`cmd /c start /B /priority`）
+7. **依赖边自动防环**：`add_dependency` 检测到循环返回 `cycle_detected`
+8. **所有写操作可撤销**：`undo_last_change` 会反向执行最近的变更
+9. **要审计时**：`SELECT * FROM op_log ORDER BY id DESC LIMIT 20`
 
 ---
 

@@ -169,6 +169,32 @@ fn daemon_status() -> serde_json::Value {
     })
 }
 
+#[tauri::command]
+async fn add_dependency(id: String, depends_on: String) -> Result<serde_json::Value, String> {
+    rpc("add_dependency", serde_json::json!({"id": id, "depends_on": depends_on})).await
+}
+
+#[tauri::command]
+async fn remove_dependency(id: String, depends_on: String) -> Result<serde_json::Value, String> {
+    rpc("remove_dependency", serde_json::json!({"id": id, "depends_on": depends_on})).await
+}
+
+#[tauri::command]
+async fn list_dependencies(id: String) -> Result<serde_json::Value, String> {
+    rpc("list_dependencies", serde_json::json!({"id": id})).await
+}
+
+#[tauri::command]
+async fn apply_preset(rules: serde_json::Value) -> Result<serde_json::Value, String> {
+    rpc("apply_preset", serde_json::json!({"rules": rules})).await
+}
+
+#[tauri::command]
+async fn undo_last_change(limit: Option<u32>) -> Result<serde_json::Value, String> {
+    let l = limit.unwrap_or(5);
+    rpc("undo_last_change", serde_json::json!({"limit": l})).await
+}
+
 fn show_window(app: &AppHandle) {
     if let Some(w) = app.get_webview_window("main") {
         let _ = w.show();
@@ -202,6 +228,11 @@ fn main() {
             io_status,
             service_status,
             daemon_status,
+            add_dependency,
+            remove_dependency,
+            list_dependencies,
+            apply_preset,
+            undo_last_change,
         ])
         .setup(|app| {
             // 托盘菜单
@@ -249,8 +280,14 @@ fn main() {
                 .build(app)?;
 
             // 启动时主窗隐藏，靠用户点托盘显示
-            if let Some(w) = app.get_webview_window("main") {
-                let _ = w.hide();
+            // 除非 STARTER_UI_VISIBLE=1（debug / preview）
+            if std::env::var("STARTER_UI_VISIBLE").as_deref() != Ok("1") {
+                if let Some(w) = app.get_webview_window("main") {
+                    let _ = w.hide();
+                }
+            } else if let Some(w) = app.get_webview_window("main") {
+                let _ = w.show();
+                let _ = w.set_focus();
             }
 
             Ok(())
