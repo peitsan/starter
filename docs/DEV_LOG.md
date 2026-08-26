@@ -5,9 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 9 完成：真实启动调度（parseCommand + priority 0-5 + 真起 notepad 验证 PriorityClass=Idle）
-- 登录自启 schtasks ONLOGON + 23/23 daemon 单测 + 真机启 notepad 验过
-- 下一批：Batch 10 (Tauri UI，等 Paxon 装 Rust) 或先打 v0.2.0-alpha 包
+- Batch 10 完成：Tauri 2.x UI 骨架（6.36MB EXE，托盘+隐藏+10 RPC commands 转发到 Daemon）
+- Rust 工具链装好（GNU 1.98 + w64devkit stub libgcc_eh）
+- 103/103 单测，typecheck/lint 0 错，root clean
+- 下一批：Batch 11 = 时间线 UI + 托盘 quick actions
 
 ## 根目录白名单
 

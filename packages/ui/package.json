@@ -1,0 +1,21 @@
+{
+  "name": "@starter/ui",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Starter UI — Tauri desktop app (system tray + WebView2).",
+  "type": "module",
+  "scripts": {
+    "tauri": "cargo tauri",
+    "dev": "cargo tauri dev",
+    "build": "cargo tauri build",
+    "build:debug": "cargo tauri build --debug",
+    "build:bin": "cargo build --manifest-path src-tauri/Cargo.toml --release",
+    "typecheck": "echo 'ui: no ts files (frontend is vanilla JS)'",
+    "test": "node --test tests/**/*.test.mjs",
+    "clean": "rimraf dist src-tauri/target"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "rimraf": "^6.0.1"
+  }
+}

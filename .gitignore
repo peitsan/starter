@@ -119,3 +119,8 @@ secrets/
 # ===== Husky / git =====
 .husky/_/
 .husky/.gitignore
+
+# Tauri / UI
+ui.*.log
+packages/ui/src-tauri/target
+
