@@ -5,9 +5,9 @@
 
 ## State (last 5 lines)
 
-- Batch 7 完成：v0.1.0 已发布（tag + GitHub Release + 所有 commit 推送）
-- DoD 全部达成：74/74 单测，typecheck/lint 0 错，根目录白名单
-- 下一批：MVP 完成 → 标记 goal complete，等待 Paxon 决定是否进入 v0.2（macOS/Linux scanner / HKLM 守护进程 / 时间线 UI）
+- Batch 8 完成：packages/daemon/ 骨架（HTTP + Bearer token + node-windows 装 service） + 11 单测过
+- 全 monorepo 85/85 单测（core 62 + daemon 11 + cli 9 + mcp 3），typecheck/lint 0 错
+- 下一步：Batch 9 (Daemon 真启动调度) 等 Paxon 装 Rust 后做 Batch 10 (Tauri UI)
 
 ## 根目录白名单
 

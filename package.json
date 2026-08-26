@@ -79,5 +79,8 @@
         "infile": "CHANGELOG.md"
       }
     }
+  },
+  "dependencies": {
+    "node-windows": "1.0.0-beta.8"
   }
 }
