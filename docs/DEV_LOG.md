@@ -5,10 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 4 完成：F2 启停 + CLI 8 命令全跑通（真机验证）
-- Controller + winreg + 8 个 CLI（scan/list/show/enable/disable/set-delay/set-priority/doctor）
-- 本机 scan 35 项，OneDrive delay/priority 实改成功
-- 下一批：Batch 5 — F3~F6 调度引擎（DAG + IO 节流 + 并发）
+- Batch 5 完成：F3-F6 调度引擎跑通（dag + io watchdog + scheduler）
+- 真机测：35 项并发 4 跑，IO watchdog 生效（typeperf + watchdog + scheduler）
+- 62 单测全过；scheduler 测试耗时最长
+- 下一批：Batch 6 — MCP Server（暴露 5 tool + 1 resource + 1 prompt）
 
 ## 根目录白名单
 
