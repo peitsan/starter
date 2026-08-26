@@ -11,8 +11,8 @@ import { strict as assert } from 'node:assert';
 import { STARTER_TOOL_NAMES, STARTER_RESOURCE_URIS, STARTER_PROMPT_NAMES } from '../src/catalog.js';
 
 describe('catalog', () => {
-  it('exposes 17 tools (Agent Settings: full startup control)', () => {
-    assert.equal(STARTER_TOOL_NAMES.length, 17);
+  it('exposes 27 tools (full startup + config + import/export + audit)', () => {
+    assert.equal(STARTER_TOOL_NAMES.length, 27);
     // 基础 5
     assert.ok(STARTER_TOOL_NAMES.includes('scan_startup_items'));
     assert.ok(STARTER_TOOL_NAMES.includes('list_startup_items'));
@@ -35,17 +35,33 @@ describe('catalog', () => {
     assert.ok(STARTER_TOOL_NAMES.includes('io_status'));
     assert.ok(STARTER_TOOL_NAMES.includes('service_status'));
     assert.ok(STARTER_TOOL_NAMES.includes('timeline'));
+    // M2.1 新增 10 tool
+    assert.ok(STARTER_TOOL_NAMES.includes('get_config'));
+    assert.ok(STARTER_TOOL_NAMES.includes('set_config'));
+    assert.ok(STARTER_TOOL_NAMES.includes('import_config'));
+    assert.ok(STARTER_TOOL_NAMES.includes('export_config'));
+    assert.ok(STARTER_TOOL_NAMES.includes('get_run_history'));
+    assert.ok(STARTER_TOOL_NAMES.includes('get_dependency_graph'));
+    assert.ok(STARTER_TOOL_NAMES.includes('list_changes'));
+    assert.ok(STARTER_TOOL_NAMES.includes('set_io_throttle'));
+    assert.ok(STARTER_TOOL_NAMES.includes('simulate_dry_run'));
+    assert.ok(STARTER_TOOL_NAMES.includes('revert_preset'));
   });
-  it('exposes 3 resources (items + timeline + doctor)', () => {
-    assert.equal(STARTER_RESOURCE_URIS.length, 3);
+  it('exposes 6 resources (items + timeline + doctor + config + io + runs/latest)', () => {
+    assert.equal(STARTER_RESOURCE_URIS.length, 6);
     assert.ok(STARTER_RESOURCE_URIS.includes('starter://items'));
     assert.ok(STARTER_RESOURCE_URIS.includes('starter://timeline'));
     assert.ok(STARTER_RESOURCE_URIS.includes('starter://doctor'));
+    assert.ok(STARTER_RESOURCE_URIS.includes('starter://config'));
+    assert.ok(STARTER_RESOURCE_URIS.includes('starter://io'));
+    assert.ok(STARTER_RESOURCE_URIS.includes('starter://runs/latest'));
   });
-  it('exposes 3 prompts (optimize / diagnose / safe_disable)', () => {
-    assert.equal(STARTER_PROMPT_NAMES.length, 3);
+  it('exposes 5 prompts (optimize / diagnose / safe_disable / find_bloat / dependency_audit)', () => {
+    assert.equal(STARTER_PROMPT_NAMES.length, 5);
     assert.ok(STARTER_PROMPT_NAMES.includes('optimize_for_io'));
     assert.ok(STARTER_PROMPT_NAMES.includes('diagnose_slow_boot'));
     assert.ok(STARTER_PROMPT_NAMES.includes('safe_disable_plan'));
+    assert.ok(STARTER_PROMPT_NAMES.includes('find_bloat'));
+    assert.ok(STARTER_PROMPT_NAMES.includes('dependency_audit'));
   });
 });

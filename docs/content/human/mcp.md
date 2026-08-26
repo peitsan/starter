@@ -42,7 +42,7 @@
 
 ## 能力清单
 
-MCP Server 暴露 **17 个工具 + 3 个资源 + 3 个 prompts**，完整参考见：
+MCP Server 暴露 **27 个工具 + 6 个资源 + 5 个 prompts**，完整参考见：
 
 - 🤖 **Agent 模式** → [工具一览](/agent/mcp-tools) / [MCP API 参考](/agent/api)
 - 👤 人类版摘要 → [CLI 指南](cli)
@@ -50,5 +50,6 @@ MCP Server 暴露 **17 个工具 + 3 个资源 + 3 个 prompts**，完整参考�
 ## 传输方式
 
 - **stdio**：`node packages/mcp/dist/index.js`（默认）
-- **SSE**：TODO
+- **SSE**：`STARTER_MCP_SSE=1 node packages/mcp/dist/index.js`（绑 `127.0.0.1:7812/sse`；`--sse` 同效）
 - **Daemon RPC**：`POST /rpc` at `127.0.0.1:7811`（Bearer token）
+  - 写操作统一走 daemon（统一审计 + HKLM 提权），daemon 不可达时本地 fallback

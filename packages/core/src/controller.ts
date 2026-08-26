@@ -5,6 +5,8 @@
  */
 
 import { randomUUID } from 'node:crypto';
+import { mkdirSync, copyFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import type { ScannedItem, Scanner } from './scanner/index.js';
 import type { StartupItemRow, StartupItemFilter } from './store/index.js';
 import {
@@ -12,6 +14,11 @@ import {
   ConfigRepository,
   DependencyRepository,
   OpLogRepository,
+  exportSnapshot,
+  importSnapshot,
+  type ImportMode,
+  type ExportPayload,
+  type ImportReport,
 } from './store/index.js';
 import { openDb, closeDb, type DB } from './store/db.js';
 import { defaultDbPath } from './store/items.js';
@@ -463,9 +470,7 @@ export class Controller {
     };
   }
 
-  timeline(
-    limit = 50,
-  ): Array<{
+  timeline(limit = 50): Array<{
     run_id: string;
     item_id: string;
     scheduled_at: number | null;
@@ -493,6 +498,98 @@ export class Controller {
       ended_at: number | null;
       status: string;
     }>;
+  }
+
+  /**
+   * run 历史：列出最近 N 次 startup_run（含摘要）。
+   * 供 `starter run history` 与 MCP get_run_history 使用。
+   */
+  runHistory(limit = 5): Array<{
+    run_id: string;
+    kind: string;
+    started_at: number;
+    finished_at: number | null;
+    total: number;
+    paused_count: number;
+  }> {
+    const rows = this.db
+      .prepare(
+        `SELECT id as run_id, kind, started_at, finished_at,
+                (SELECT COUNT(*) FROM startup_run_event e WHERE e.run_id = r.id) AS total
+         FROM startup_run r
+         ORDER BY started_at DESC
+         LIMIT ?`,
+      )
+      .all(limit);
+    return (
+      rows as Array<{
+        run_id: string;
+        kind: string;
+        started_at: number;
+        finished_at: number | null;
+        total: number;
+      }>
+    ).map((r) => ({ ...r, paused_count: 0 }));
+  }
+
+  /** 导出配置快照（F9 / RFC-001 §4.9）。返回 payload；可选写盘 */
+  exportConfig(): ExportPayload {
+    return exportSnapshot(this.db);
+  }
+
+  /**
+   * 导入配置快照。导入前自动备份当前 db 到同目录 starter.db.bak-<ts>。
+   * 返回导入报告（RFC-001 §4.9 merge/replace/append）。
+   */
+  importConfig(raw: string, mode: ImportMode = 'merge'): ImportReport {
+    // 自动备份
+    const path = this.dbPath();
+    if (path && path !== ':memory:' && path !== '(unknown)') {
+      try {
+        const bak = `${path}.bak-${Date.now()}`;
+        mkdirSync(dirname(path), { recursive: true });
+        copyFileSync(path, bak);
+      } catch {
+        // 备份失败不阻断（只读/内存库）
+      }
+    }
+    const report = importSnapshot(this.db, raw, mode);
+    // 写 op_log
+    try {
+      this.opLog.write({
+        actor: this.actor,
+        action: 'import_config',
+        args: { mode },
+        result: 'ok',
+        message: `items_in=${report.items_inserted} items_up=${report.items_updated}`,
+      });
+    } catch {
+      // 忽略审计失败
+    }
+    return report;
+  }
+
+  /** 全部 config（含默认来源标注）。供 get_config / starter://config */
+  configAll(): Record<string, { value: string; source: 'db' | 'default' }> {
+    return this.config.all();
+  }
+
+  /** 全量依赖图（节点 + 边）。供 get_dependency_graph */
+  dependencyGraph(): { nodes: string[]; edges: Array<{ from: string; to: string }> } {
+    const items = this.items.list();
+    const nodes = items.map((i) => i.id);
+    const edges: Array<{ from: string; to: string }> = [];
+    for (const it of items) {
+      for (const dep of this.deps.listFor(it.id).outgoing) {
+        edges.push({ from: it.id, to: dep });
+      }
+    }
+    return { nodes, edges };
+  }
+
+  /** op_log 审计查询（最新优先）。供 list_changes */
+  listChanges(limit = 50): unknown[] {
+    return this.opLog.list(limit);
   }
 
   async ioStatus(): Promise<IoSample & { ok: boolean; error?: string }> {

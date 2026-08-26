@@ -71,6 +71,18 @@ function freshDb() {
   };
 }
 
+test('new item default priority is 2 (Normal, RFC-001 §4.5)', () => {
+  const ctx = freshDb();
+  try {
+    const row = ctx.items.get('a');
+    assert.ok(row, 'item a should exist');
+    // 默认值 3→2：所有新增启动项默认 Normal，不再被 daemon 起成 ABOVENORMAL
+    assert.equal(row!.priority, 2);
+  } finally {
+    ctx.cleanup();
+  }
+});
+
 test('DependencyRepository.add + listFor', () => {
   const ctx = freshDb();
   try {
@@ -186,6 +198,73 @@ test('OpLogRepository.listUndoable filters non-ok and unknown actions', () => {
     const actions = u.map((r) => r.action);
     assert.ok(actions.includes('disable'));
     assert.ok(actions.includes('set_priority'));
+  } finally {
+    ctx.cleanup();
+  }
+});
+
+// ---------- transfer: export / import (RFC-001 §4.9) ----------
+
+import { exportSnapshot, importSnapshot } from '../src/store/transfer.js';
+
+test('transfer.exportSnapshot round-trips items+deps+config', () => {
+  const ctx = freshDb();
+  try {
+    const payload = exportSnapshot(ctx.db);
+    assert.equal(payload.schema_version, 'v1');
+    assert.ok(Array.isArray(payload.items));
+    assert.ok(Array.isArray(payload.dependencies));
+    assert.ok(payload.config && typeof payload.config === 'object');
+    // freshDb 注入了 a/b/c
+    const ids = payload.items.map((i) => i.fingerprint);
+    assert.ok(ids.includes('a') && ids.includes('b') && ids.includes('c'));
+  } finally {
+    ctx.cleanup();
+  }
+});
+
+test('transfer.importSnapshot merge adds new item and keeps others', () => {
+  const ctx = freshDb();
+  try {
+    const payload = exportSnapshot(ctx.db);
+    // 加入一个全新 item
+    payload.items.push({ fingerprint: 'new1', enabled: true, delay_ms: 0, priority: 2 });
+    const report = importSnapshot(ctx.db, JSON.stringify(payload), 'merge');
+    assert.equal(report.ok, true);
+    assert.equal(report.items_inserted, 1);
+    const row = ctx.items.get('new1');
+    assert.ok(row, 'new1 should exist');
+  } finally {
+    ctx.cleanup();
+  }
+});
+
+test('transfer.importSnapshot append does not overwrite existing', () => {
+  const ctx = freshDb();
+  try {
+    // 先把 a 改成 enabled=false
+    ctx.db.prepare('UPDATE startup_item SET enabled=0 WHERE id=?').run('a');
+    const payload = exportSnapshot(ctx.db);
+    // append 模式：new1 插入，a 保持 disabled（不覆盖）
+    payload.items.push({ fingerprint: 'new1', enabled: true, delay_ms: 0, priority: 2 });
+    const report = importSnapshot(ctx.db, JSON.stringify(payload), 'append');
+    assert.equal(report.ok, true);
+    assert.equal(report.items_inserted, 1); // 只有 new1
+    const a = ctx.items.get('a');
+    assert.equal(a!.enabled, 0, 'append must not overwrite existing item');
+    const n = ctx.items.get('new1');
+    assert.ok(n, 'new1 should be inserted');
+  } finally {
+    ctx.cleanup();
+  }
+});
+
+test('transfer.importSnapshot rejects bad schema_version', () => {
+  const ctx = freshDb();
+  try {
+    const payload = exportSnapshot(ctx.db);
+    payload.schema_version = 'v99';
+    assert.throws(() => importSnapshot(ctx.db, JSON.stringify(payload), 'merge'), /unsupported/);
   } finally {
     ctx.cleanup();
   }

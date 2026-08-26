@@ -136,15 +136,13 @@ Agent 会自己调 `scan_startup_items` → 分析 → `set_delay` → `add_depe
 
 ## 📜 路线图
 
-- [x] **v0.0.x** 项目骨架（CI / Husky / lint / 4 个 workspace 包占位）
-- [ ] **v0.1.0** MVP：F1 扫描 / F2 启停 / F3 延迟 / F4 依赖 / F5 并发 / F6 IO 节流
-- [ ] **v0.2.0** F7 时间线 / F10 托盘
+- [x] **v0.0.x** 项目骨架（CI / Husky / lint / 6 个 workspace 包占位）
+- [x] **v0.1.0** MVP：F1 扫描 / F2 启停 / F3 延迟 / F4 依赖 / F5 并发 / F6 IO 节流 + F11 CLI + F12 MCP 基础
+- [x] **v0.2.0** F7 时间线 / F10 托盘 / daemon 服务 / Tauri 壳 / MCP 完整（27 tool / 6 resource / 5 prompt）
 - [ ] **v0.3.0** F8 进程优先级
-- [ ] **v0.5.0** F11 CLI 完整实现
-- [ ] **v0.6.0** F12 MCP Server 完整实现
-- [ ] **v1.0.0** 文档完善、UI 打磨、代码签名
+- [ ] **v1.0.0** 计划任务/服务扫描、UI 打磨、代码签名
 
-详见 [`docs/PRD.md`](docs/PRD.md)。
+详见 [`docs/PRD.md`](docs/PRD.md) 与 [`docs/SYSTEM_MANUAL.md`](docs/SYSTEM_MANUAL.md)。
 
 ## 🙏 致谢
 

@@ -35,6 +35,13 @@
           ],
         },
         {
+          title: '手册',
+          items: [
+            { key: 'system-manual', label: '系统手册', icon: '📘' },
+            { key: 'developer-manual', label: '开发手册', icon: '🛠' },
+          ],
+        },
+        {
           title: '参考',
           items: [
             { key: 'dev-log', label: '开发日志', icon: '📓' },

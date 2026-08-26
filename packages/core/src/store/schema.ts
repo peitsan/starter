@@ -29,7 +29,7 @@ export function applySchema(db: Database): void {
       source_path   TEXT NOT NULL,
       enabled       INTEGER NOT NULL DEFAULT 1,
       delay_ms      INTEGER NOT NULL DEFAULT 0,
-      priority      INTEGER NOT NULL DEFAULT 3,
+      priority      INTEGER NOT NULL DEFAULT 2,  -- 0=Idle 1=BelowNormal 2=Normal 3=AboveNormal 4=High 5=Realtime (RFC-001 §4.5)
       risk          TEXT NOT NULL,
       vendor        TEXT,
       updated_at    INTEGER NOT NULL

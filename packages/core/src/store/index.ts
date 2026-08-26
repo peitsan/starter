@@ -5,3 +5,4 @@ export * from './items.js';
 export * from './config.js';
 export * from './dependencies.js';
 export * from './op-log.js';
+export * from './transfer.js';

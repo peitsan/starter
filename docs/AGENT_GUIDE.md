@@ -42,7 +42,10 @@
 }
 ```
 
-接入后你有 **17 个 tool + 3 个 resource + 3 个 prompt**。
+接入后你有 **27 个 tool + 6 个 resource + 5 个 prompt**（stdio 默认；`STARTER_MCP_SSE=1` 走 SSE，绑 `127.0.0.1:7812/sse`）。
+
+> 写操作（enable/disable/set_delay/…）统一走 daemon HTTP RPC（127.0.0.1:7811，Bearer token）：
+> daemon 可达走 daemon（统一审计 + HKLM 提权），不可达本地 fallback。
 
 ### 3.1 工具清单
 
@@ -65,18 +68,33 @@
 | `io_status` | 采样磁盘 IO（idle%/队列） | – |
 | `service_status` | 查询 Windows 服务状态 | – |
 | `timeline` | 最近一次 run 的事件 | `limit?` |
+| `get_config` | 读全局配置（含默认来源） | – |
+| `set_config` | 写全局配置键（校验范围） | `key`, `value` |
+| `import_config` | 导入配置快照（merge/replace/append） | `snapshot`, `mode?` |
+| `export_config` | 导出配置快照（items+deps+config） | – |
+| `get_run_history` | 最近 N 次 run 摘要 | `limit?` |
+| `get_dependency_graph` | 全量依赖图（节点+边） | – |
+| `list_changes` | 审计日志（所有写操作） | `limit?` |
+| `set_io_throttle` | 快捷设 IO 节流阈值 | – |
+| `simulate_dry_run` | 纯干跑模拟（不起进程） | `simulated_ms?` |
+| `revert_preset` | 回滚最近一次批量变更 | `yes` |
 
-### 3.2 Resource
+### 3.2 Resource（6 个）
 
 - `starter://items` — 所有启动项的完整 JSON
 - `starter://timeline` — 最近一次 run 的事件
 - `starter://doctor` — 自检报告
+- `starter://config` — 全局配置（含默认来源）
+- `starter://io` — 当前磁盘 IO 采样
+- `starter://runs/latest` — 最近一次 run 摘要 + 事件
 
-### 3.3 Prompt
+### 3.3 Prompt（5 个）
 
 - `optimize_for_io` — 基于当前配置生成低 IO 优化建议
 - `diagnose_slow_boot` — 慢启动瓶颈分析
 - `safe_disable_plan` — 安全禁用计划（跳过 Microsoft/驱动）
+- `find_bloat` — 找臃肿项（高延迟可禁项）
+- `dependency_audit` — 依赖图审计（环/孤点/长链）
 
 ### 3.4 自然语言调用的 8 个典型场景
 
@@ -114,8 +132,9 @@
 ### 3.5 重要约束
 
 - **critical 项不可禁用**（Microsoft Defender / SecurityHealth）→ 返回 `E_PROTECTED`
-- **HKLM 项禁用需要管理员权限** → 返回 `E_ELEVATION_REQUIRED`（v0.1 暂未实装守护进程）
-- 所有写操作进入 SQLite `op_log` 表，可审计
+- **HKLM 项禁用需要管理员权限** → 返回 `E_ELEVATION_REQUIRED`；装好 daemon 后写操作自动走 daemon 提权
+- **所有写操作需 `yes:true` 确认**（不传返回预览）
+- 所有写操作进入 SQLite `op_log` 表，可审计、可撤销
 - 退出码：`ok=true` 表示成功，`ok=false` 加 `reason` 字段
 
 ---

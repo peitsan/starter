@@ -21,16 +21,32 @@ export const STARTER_TOOL_NAMES = [
   'io_status',
   'service_status',
   'timeline',
+  // M2.1 新增 10 tool
+  'get_config',
+  'set_config',
+  'import_config',
+  'export_config',
+  'get_run_history',
+  'get_dependency_graph',
+  'list_changes',
+  'set_io_throttle',
+  'simulate_dry_run',
+  'revert_preset',
 ] as const;
 
 export const STARTER_RESOURCE_URIS = [
   'starter://items',
   'starter://timeline',
   'starter://doctor',
+  'starter://config',
+  'starter://io',
+  'starter://runs/latest',
 ] as const;
 
 export const STARTER_PROMPT_NAMES = [
   'optimize_for_io',
   'diagnose_slow_boot',
   'safe_disable_plan',
+  'find_bloat',
+  'dependency_audit',
 ] as const;

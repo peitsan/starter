@@ -18,6 +18,7 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 import type { ScanOptions, Scanner, ScannedItem, Source } from './types.js';
 import { fingerprint, parseCommand } from './command.js';
+import { scanTaskScheduler } from './schtasks.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -91,6 +92,21 @@ export class WindowsScanner implements Scanner {
         this.scanStartupFolder('common').then((items) => {
           results.push(...items);
         }),
+      );
+    }
+
+    if (include('TaskScheduler')) {
+      tasks.push(
+        scanTaskScheduler()
+          .then((items) => {
+            for (const it of items) {
+              if (skipCritical && it.risk === 'critical') continue;
+              results.push(it);
+            }
+          })
+          .catch(() => {
+            /* schtasks.exe 失败（非 Windows / 无权限）就跳过 */
+          }),
       );
     }
 

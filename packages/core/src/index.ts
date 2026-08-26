@@ -6,3 +6,4 @@ export * from './controller.js';
 export * from './dag/index.js';
 export * from './io/index.js';
 export * from './scheduler/index.js';
+export * from './registry/index.js';

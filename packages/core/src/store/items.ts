@@ -85,7 +85,10 @@ export class ItemRepository {
             source_path: r.source_path,
             enabled: r.enabled ? 1 : 0,
             delay_ms: 0,
-            priority: 3,
+            // 统一语义表（见 docs/RFC-001-ai-agent-integration.md §4.5）：
+            //   0=Idle 1=BelowNormal 2=Normal 3=AboveNormal 4=High 5=Realtime
+            // 默认 Normal (2)：和未设置 priority 的 Windows 进程行为一致
+            priority: 2,
             risk: r.risk,
             vendor: r.vendor,
             updated_at: now,

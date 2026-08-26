@@ -32,7 +32,13 @@ export class RpcController {
   private core: Controller;
 
   constructor(private ctx: RpcContext) {
-    this.core = new Controller({ scanner: detectScanner(), actor: 'daemon' });
+    // dbPath 用 ctx.config.dbPath（V0.2: %ProgramData%\Starter\starter.db），
+    // 之前漏传导致 core 落到 ~/.starter/starter.db，与设计不符且测试无法隔离。
+    this.core = new Controller({
+      scanner: detectScanner(),
+      actor: 'daemon',
+      dbPath: this.ctx.config.dbPath,
+    });
   }
 
   close(): void {
@@ -69,12 +75,14 @@ export class RpcController {
       case 'set_delay': {
         const id = String(params.id ?? '');
         const ms = Number(params.delay_ms);
-        return this.core.setDelay(id, ms);
+        const ok = this.core.setDelay(id, ms);
+        return ok ? { ok: true, id, delay_ms: ms } : { ok: false, reason: 'not_found' };
       }
       case 'set_priority': {
         const id = String(params.id ?? '');
         const p = Number(params.priority);
-        return this.core.setPriority(id, p);
+        const ok = this.core.setPriority(id, p);
+        return ok ? { ok: true, id, priority: p } : { ok: false, reason: 'not_found' };
       }
       case 'set_io_config': {
         const k = String(params.key ?? '');
@@ -160,9 +168,16 @@ export class RpcController {
     const startedAt = Date.now();
     this.logRunEvent(runId, '*run', 'started', startedAt, `items=${items.length}`);
 
+    // RFC-001 / M0.2: 真实调度的 DAG 依赖图必须从 db 读，**不能传空 Map**。
+    // 之前 deps: new Map() 会让登录真调度时 DAG 依赖完全不生效，
+    // 仅仅 core 的单元测试（自己传 deps）能通过，是误导。
+    const deps = new Map<string, string[]>(
+      items.map((it) => [it.id, this.core.listDependencies(it.id).outgoing]),
+    );
+
     const sched = new Scheduler({
       items,
-      deps: new Map(),
+      deps,
       ioSource: new WindowsIoSource(),
       queueThreshold: this.core.config.asNumber('io_queue_threshold'),
       busyThresholdPct: this.core.config.asNumber('io_busy_threshold_pct'),

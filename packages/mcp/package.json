@@ -13,13 +13,15 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "test": "node --test --import tsx tests/**/*.test.ts",
+    "e2e": "tsx scripts/e2e-mcp.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@starter/cli": "workspace:*",
-    "@starter/core": "workspace:*"
+    "@starter/core": "workspace:*",
+    "@starter/ipc-client": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",

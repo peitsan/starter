@@ -100,3 +100,80 @@ describe('WindowsScanner (real reg.exe, gated by env)', () => {
     // 不强制数量，但至少能找到几个常见项
   });
 });
+
+// ---------- 计划任务（schtasks）扫描 ----------
+
+import {
+  parseCsvLine,
+  isStartupTrigger,
+  classifyTaskRisk,
+  scanTaskScheduler,
+} from '../src/index.js';
+
+describe('parseCsvLine', () => {
+  it('splits plain comma fields', () => {
+    assert.deepEqual(parseCsvLine('a,b,c'), ['a', 'b', 'c']);
+  });
+  it('handles quoted field containing comma', () => {
+    assert.deepEqual(parseCsvLine('a,"b,c",d'), ['a', 'b,c', 'd']);
+  });
+  it('handles doubled quotes inside quoted field', () => {
+    assert.deepEqual(parseCsvLine('"he said ""hi""",x'), ['he said "hi"', 'x']);
+  });
+  it('handles empty fields', () => {
+    assert.deepEqual(parseCsvLine('a,,c,'), ['a', '', 'c', '']);
+  });
+});
+
+describe('isStartupTrigger', () => {
+  it('accepts logon / system startup / idle', () => {
+    assert.equal(isStartupTrigger('At logon'), true);
+    assert.equal(isStartupTrigger('At system startup'), true);
+    assert.equal(isStartupTrigger('At idle'), true);
+    assert.equal(isStartupTrigger('On idle'), true);
+  });
+  it('rejects daily / weekly / one-time', () => {
+    assert.equal(isStartupTrigger('Daily'), false);
+    assert.equal(isStartupTrigger('Weekly'), false);
+    assert.equal(isStartupTrigger('One time only'), false);
+    assert.equal(isStartupTrigger(''), false);
+  });
+});
+
+describe('classifyTaskRisk', () => {
+  it('marks Microsoft\\Windows\\... tasks as critical (system)', () => {
+    assert.equal(
+      classifyTaskRisk('\\Microsoft\\Windows\\\\.NET Framework\\NGEN task', ''),
+      'critical',
+    );
+  });
+  it('marks %windir% / system32 commands as critical', () => {
+    assert.equal(classifyTaskRisk('X', '%windir%\\system32\\something.exe'), 'critical');
+    assert.equal(classifyTaskRisk('X', 'C:\\Windows\\System32\\foo.exe'), 'critical');
+  });
+  it('marks Program Files / AppData commands as normal', () => {
+    assert.equal(
+      classifyTaskRisk('AppUpdater', 'C:\\Program Files\\App\\app.exe --update'),
+      'normal',
+    );
+    assert.equal(classifyTaskRisk('X', 'C:\\Users\\me\\AppData\\Local\\X\\x.exe'), 'normal');
+  });
+  it('marks unknown as recommend_off', () => {
+    assert.equal(classifyTaskRisk('Mystery', 'C:\\Temp\\run.ps1'), 'recommend_off');
+  });
+});
+
+describe('scanTaskScheduler (real schtasks.exe, gated by env)', () => {
+  it('returns startup-triggered tasks when STARTER_RUN_SCHTASKS=1', async () => {
+    if (process.env.STARTER_RUN_SCHTASKS !== '1') {
+      return; // opt-in: 手动 Windows 冒烟
+    }
+    if (process.platform !== 'win32') return;
+    const items = await scanTaskScheduler();
+    assert.ok(Array.isArray(items));
+    for (const it of items) {
+      assert.equal(it.source, 'TaskScheduler');
+      assert.ok(typeof it.name === 'string' && it.name.length > 0);
+    }
+  });
+});

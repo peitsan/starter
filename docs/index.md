@@ -13,6 +13,9 @@
 | Doc | Audience | What's inside |
 |---|---|---|
 | **[Agent Guide](AGENT_GUIDE.md)** | 🤖 LLM agents | 30-second quick start: MCP tools, CLI, SDK, common scenarios, error codes |
+| **[System Manual](SYSTEM_MANUAL.md)** | 🛠 Operators | Install / deploy / configure / CLI / MCP / security / troubleshooting |
+| **[Developer Manual](DEVELOPER_MANUAL.md)** | 🧑‍💻 Developers | Repo structure, stack, build/test, conventions, how to extend |
+| **[Audit Report](AUDIT_REPORT.md)** | 🔍 All | Full source audit (158 tests, M0–M3, findings) |
 | **[README](../README.md)** | 👤 Humans | Project overview, features, architecture, quick start |
 | **[MRD](MRD.md)** | 📊 Product / Biz | Market requirements, target users, competitive analysis, KPIs |
 | **[PRD](PRD.md)** | 🛠 Product / Dev | Product requirements (12 features F1–F12), data model, release plan |
@@ -63,9 +66,9 @@ await ctrl.scan();
 ## ✨ Highlights
 
 - **F1–F6** — scan / enable / disable / delay / DAG / concurrent / **IO throttling** ⭐
-- **F11** — 8 CLI commands with stable `--json` output
-- **F12** — 5 MCP tools + 1 resource + 1 prompt
-- **74 unit tests** across scanner / store / controller / winreg / dag / io / scheduler / cli / mcp
+- **F11** — CLI commands with stable `--json` output
+- **F12** — **27 MCP tools + 6 resources + 5 prompts** (stdio / SSE), all writes go through the daemon
+- **158 unit tests** across scanner / store / controller / winreg / dag / io / scheduler / cli / daemon / ipc-client / mcp / ui
 - **MIT licensed** — open source
 
 ---

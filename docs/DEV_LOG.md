@@ -5,10 +5,11 @@
 
 ## State (last 5 lines)
 
-- Batch 12 完成：Agent Settings 完整化 — MCP 17 tools + 3 resources + 3 prompts + 防环 DAG + undo 撤销 + op_log 审计
-- core 86 + daemon 30 + ui 14 + cli 9 + mcp 3 = 142/142 单测全过，typecheck/lint 0 错
-- 新增 docs/AGENT_API.md（Agent/MCP API 完整文档）
-- 下一批：Batch 13 = Tauri bundle (.msi/.nsis) + GitHub Actions 自动打包 + i18n 收尾
+- M0/M1/M2 完成：优先级统一（RFC-001 §4.5，默认 2）+ daemon deps 修复 + daemon dbPath 修复
+- M1：@starter/ipc-client 实装（10/10）+ @starter/core/registry 命令注册器 + CLI/MCP 写操作走 daemon IPC（fallback 本地，兼容旧 daemon 裸 boolean）
+- M2：MCP 扩到 27 tools + 6 resources + 5 prompts + yes 确认流（RFC-001 §4.6）+ SSE transport（127.0.0.1:7812 实测）+ import/export（RFC §4.9）
+- 单测 core 91 + daemon 32 + ipc-client 10 + ui 14 + cli 9 + mcp 3 = 159/159 全过，typecheck 0 错；MCP e2e（真实起 server）27/27 PASS
+- 已更新 docs/AGENT_API.md（27 tools/6 resources/5 prompts/daemon IPC 路由）；下一批：Tauri bundle + 部署新 daemon 二进制 + 20-run trim + TaskScheduler/Service 扫描
 
 ## 根目录白名单
 
