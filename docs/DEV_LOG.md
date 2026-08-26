@@ -5,10 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 10 完成：Tauri 2.x UI 骨架（6.36MB EXE，托盘+隐藏+10 RPC commands 转发到 Daemon）
-- Rust 工具链装好（GNU 1.98 + w64devkit stub libgcc_eh）
-- 103/103 单测，typecheck/lint 0 错，root clean
-- 下一批：Batch 11 = 时间线 UI + 托盘 quick actions
+- Batch 11 完成：时间线 SVG + 3 tabs (items/timeline/settings) + 托盘 quick actions + 服务/IO 状态
+- starter-ui.exe 6.37MB release build 真机跑通
+- 112/112 单测，typecheck/lint 0 错
+- 下一批：Batch 12 = Tauri bundle (.msi/.nsis) + GitHub Actions 自动打包
 
 ## 根目录白名单
 

@@ -19,7 +19,7 @@ import { Controller, detectScanner, Scheduler, WindowsIoSource } from '@starter/
 import type { StartupItemRow, StartupItemFilter } from '@starter/core';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { DaemonConfig } from './config.js';
 import { spawnItem } from './scheduler-exec.js';
@@ -87,6 +87,16 @@ export class RpcController {
           simulatedRunMs: Number(params.simulated_ms ?? 5000),
           tickMs: Number(params.tick_ms ?? 200),
         });
+      }
+      case 'timeline': {
+        const limit = Number(params.limit ?? 50);
+        return this.timelineData(limit);
+      }
+      case 'io_status': {
+        return await this.ioStatus();
+      }
+      case 'service_status': {
+        return await this.serviceStatus();
       }
       default:
         throw new Error(`unknown method: ${method}`);
@@ -203,6 +213,126 @@ export class RpcController {
       appendFileSync(join(this.ctx.config.dataDir, 'run_events.ndjson'), line, 'utf8');
     } catch {
       // 静默失败：log 错误不该 crash 调度
+    }
+  }
+
+  /**
+   * timeline data — 从 run_events.ndjson 解析最近 N 个 item 状态
+   * 返回：[{ run_id, item_id, status, t, detail }]  按 t 升序
+   */
+  timelineData(
+    limit: number,
+  ): Array<{ run_id: string; item_id: string; status: string; t: number; detail: string }> {
+    const path = join(this.ctx.config.dataDir, 'run_events.ndjson');
+    if (!existsSync(path)) return [];
+    try {
+      const raw = readFileSync(path, 'utf8');
+      const lines = raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      const startIdx: number[] = [];
+      for (let i = 0; i < lines.length; i++) {
+        const ln = lines[i] ?? '';
+        if (ln.includes('"item":"*run"') && ln.includes('"status":"started"')) {
+          startIdx.push(i);
+        }
+      }
+      if (startIdx.length === 0) return [];
+      const start = startIdx[startIdx.length - 1]!;
+      const block = lines.slice(start);
+      const out: Array<{
+        run_id: string;
+        item_id: string;
+        status: string;
+        t: number;
+        detail: string;
+      }> = [];
+      for (const ln of block) {
+        try {
+          const o = JSON.parse(ln) as {
+            run: string;
+            item: string;
+            status: string;
+            t: number;
+            detail?: string;
+          };
+          if (o.item === '*run') continue;
+          out.push({
+            run_id: o.run,
+            item_id: o.item,
+            status: o.status,
+            t: o.t,
+            detail: o.detail ?? '',
+          });
+        } catch {
+          // skip bad lines
+        }
+        if (out.length >= limit) break;
+      }
+      return out;
+    } catch {
+      return [];
+    }
+  }
+
+  /** 当前磁盘 IO 状态（采样一次） */
+  async ioStatus(): Promise<{
+    idle_pct: number;
+    queue_len: number;
+    at: number;
+    ok: boolean;
+    error?: string;
+  }> {
+    const src = new WindowsIoSource();
+    try {
+      const s = await src.sample();
+      return { idle_pct: s.idle_pct, queue_len: s.queue_len, at: s.at, ok: true };
+    } catch (e) {
+      return {
+        idle_pct: 100,
+        queue_len: 0,
+        at: Date.now(),
+        ok: false,
+        error: e instanceof Error ? e.message : String(e),
+      };
+    } finally {
+      await src.close();
+    }
+  }
+
+  /** Windows Service 状态（sc query） */
+  async serviceStatus(): Promise<{
+    installed: boolean;
+    running: boolean;
+    state: string;
+    pid?: number;
+  }> {
+    if (process.platform !== 'win32') {
+      return { installed: false, running: false, state: 'unsupported' };
+    }
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const execFileAsync = promisify(execFile);
+    try {
+      const { stdout } = await execFileAsync('sc', ['query', 'StarterDaemon'], {
+        encoding: 'utf8',
+        windowsHide: true,
+      });
+      const stateMatch = /STATE\s+:\s+(\d+)\s+(\w+)/.exec(stdout);
+      const pidMatch = /\((\d+)\)/.exec(stdout);
+      const state = stateMatch?.[2] ?? 'UNKNOWN';
+      const pid = pidMatch ? Number(pidMatch[1]) : undefined;
+      const out: { installed: boolean; running: boolean; state: string; pid?: number } = {
+        installed: true,
+        running: state === 'RUNNING',
+        state,
+      };
+      if (pid !== undefined) out.pid = pid;
+      return out;
+    } catch (e) {
+      return {
+        installed: false,
+        running: false,
+        state: e instanceof Error ? e.message : 'not installed',
+      };
     }
   }
 }

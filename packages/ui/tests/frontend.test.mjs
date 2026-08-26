@@ -30,6 +30,27 @@ test('main.js uses Tauri invoke API', () => {
   assert.match(js, /invoke\(['"]disable_item['"]/);
   assert.match(js, /invoke\(['"]set_delay['"]/);
   assert.match(js, /invoke\(['"]scan_items['"]/);
+  assert.match(js, /invoke\(['"]timeline['"]/);
+  assert.match(js, /invoke\(['"]io_status['"]/);
+  assert.match(js, /invoke\(['"]service_status['"]/);
+});
+
+test('index.html has 3 tabs (items/timeline/settings)', () => {
+  const html = readFileSync(join(distDir, 'index.html'), 'utf8');
+  assert.match(html, /data-tab="items"/);
+  assert.match(html, /data-tab="timeline"/);
+  assert.match(html, /data-tab="settings"/);
+  assert.match(html, /id="timeline-svg"/);
+  assert.match(html, /id="io-status"/);
+  assert.match(html, /id="service-status"/);
+});
+
+test('main.js has gantt drawing + tab switching + tray events', () => {
+  const js = readFileSync(join(distDir, 'main.js'), 'utf8');
+  assert.match(js, /function drawGantt/);
+  assert.match(js, /function switchTab/);
+  assert.match(js, /listen\(['"]tray-timeline['"]/);
+  assert.match(js, /listen\(['"]tray-io['"]/);
 });
 
 test('tauri config references correct frontend', () => {

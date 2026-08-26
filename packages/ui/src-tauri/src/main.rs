@@ -143,6 +143,21 @@ async fn schedule_run(simulated_ms: Option<u64>) -> Result<serde_json::Value, St
 }
 
 #[tauri::command]
+async fn timeline(limit: Option<u64>) -> Result<serde_json::Value, String> {
+    rpc("timeline", serde_json::json!({ "limit": limit.unwrap_or(50) })).await
+}
+
+#[tauri::command]
+async fn io_status() -> Result<serde_json::Value, String> {
+    rpc("io_status", serde_json::json!({})).await
+}
+
+#[tauri::command]
+async fn service_status() -> Result<serde_json::Value, String> {
+    rpc("service_status", serde_json::json!({})).await
+}
+
+#[tauri::command]
 fn daemon_status() -> serde_json::Value {
     let cfg = DAEMON.get().cloned().unwrap_or(DaemonConfig {
         base_url: format!("http://{}:{}", DEFAULT_HOST, DEFAULT_PORT),
@@ -183,14 +198,23 @@ fn main() {
             scan_items,
             doctor,
             schedule_run,
+            timeline,
+            io_status,
+            service_status,
             daemon_status,
         ])
         .setup(|app| {
             // 托盘菜单
             let open_item = MenuItem::with_id(app, "open", "Open Starter", true, None::<&str>)?;
             let scan_item = MenuItem::with_id(app, "scan", "Rescan now", true, None::<&str>)?;
+            let timeline_item = MenuItem::with_id(app, "timeline", "View timeline", true, None::<&str>)?;
+            let io_item = MenuItem::with_id(app, "io", "Check disk IO", true, None::<&str>)?;
+            let sep = tauri::menu::PredefinedMenuItem::separator(app)?;
             let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&open_item, &scan_item, &quit_item])?;
+            let menu = Menu::with_items(
+                app,
+                &[&open_item, &scan_item, &timeline_item, &io_item, &sep, &quit_item],
+            )?;
 
             let _tray = TrayIconBuilder::with_id("main")
                 .tooltip("Starter — startup manager")
@@ -199,6 +223,14 @@ fn main() {
                     "open" => show_window(app),
                     "scan" => {
                         let _ = app.emit("tray-scan", ());
+                        show_window(app);
+                    }
+                    "timeline" => {
+                        let _ = app.emit("tray-timeline", ());
+                        show_window(app);
+                    }
+                    "io" => {
+                        let _ = app.emit("tray-io", ());
                         show_window(app);
                     }
                     "quit" => app.exit(0),
