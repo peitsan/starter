@@ -1,3 +1,16 @@
+
+
+## 0.1.0 (2026-08-26)
+
+
+### Features
+
+* **cli,core:** f2 enable/disable + 8 cli commands ([8904cf9](https://github.com/peitsan/starter/commit/8904cf9e285f173c6ec4c5724cf2cbabcb2ed30e))
+* **core:** f1 startup scanner (windows registry + startup folders) ([a072f40](https://github.com/peitsan/starter/commit/a072f40c268c2a3c993ee9d82d61a965cff3497c))
+* **core:** f2 sqlite store with op_log audit (6 tables, 13 tests) ([3ba08da](https://github.com/peitsan/starter/commit/3ba08daa3ab58b92fbeabda1138f2bc074cc9bb8))
+* **core:** f3-f6 scheduler (dag + io watchdog + concurrent) ([907dfef](https://github.com/peitsan/starter/commit/907dfef3a8f69cab6601df7188e38d34eb427501))
+* **mcp:** f12 mcp server with 5 tools + 1 resource + 1 prompt ([7056f1c](https://github.com/peitsan/starter/commit/7056f1ca5f7eb8ee35d07718af9d0c6651e41564))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
