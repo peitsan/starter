@@ -7,14 +7,17 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
 [![Release: release-it](https://img.shields.io/badge/Release-release--it-orange)](https://github.com/release-it/release-it)
 
+> 🤖 **AI agent / LLM user?** Read [`docs/AGENT_GUIDE.md`](docs/AGENT_GUIDE.md) instead — it's a 30-second quick start written for LLM agents (MCP tools, common scenarios, error codes).
+> 🌍 **Human-friendly docs** (this README, MRD, PRD, dev log) are auto-published at **<https://peitsan.github.io/starter/>** via GitHub Pages.
+
 Starter 是一个 **Windows 启动项管理软件**。与系统自带的「任务管理器 → 启动」相比，它能解决 3 类
 典型痛点：
 
-| 痛点 | Starter 的方案 |
-|---|---|
-| 多盘 IO 冲突导致开机卡死 | **F6 IO 感知节流** ⭐ 磁盘繁忙自动暂停下一批启动项 |
-| 想让某些软件晚点起 / 排队起 | **F3 延迟启动 + F4 DAG 依赖 + F5 并发控制** |
-| 想要 LLM 直接帮我改启动项 | **F12 MCP Server** —— Cursor / Claude Desktop 一键接入 |
+| 痛点                        | Starter 的方案                                         |
+| --------------------------- | ------------------------------------------------------ |
+| 多盘 IO 冲突导致开机卡死    | **F6 IO 感知节流** ⭐ 磁盘繁忙自动暂停下一批启动项     |
+| 想让某些软件晚点起 / 排队起 | **F3 延迟启动 + F4 DAG 依赖 + F5 并发控制**            |
+| 想要 LLM 直接帮我改启动项   | **F12 MCP Server** —— Cursor / Claude Desktop 一键接入 |
 
 ## ✨ 特性
 
