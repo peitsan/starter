@@ -18,7 +18,11 @@
 import { Controller, detectScanner, Scheduler, WindowsIoSource } from '@starter/core';
 import type { StartupItemRow, StartupItemFilter } from '@starter/core';
 import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import { appendFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { DaemonConfig } from './config.js';
+import { spawnItem } from './scheduler-exec.js';
 
 export interface RpcContext {
   config: DaemonConfig;
@@ -97,9 +101,29 @@ export class RpcController {
     concurrentMax: number;
     simulatedRunMs: number;
     tickMs: number;
-  }): Promise<{ total: number; paused_count: number; started: string[]; failed: string[] }> {
+  }): Promise<{
+    total: number;
+    paused_count: number;
+    started: string[];
+    failed: string[];
+    run_id: string;
+    dry_run: boolean;
+  }> {
     const items = this.core.list({ enabled: true });
-    if (items.length === 0) return { total: 0, paused_count: 0, started: [], failed: [] };
+    if (items.length === 0) {
+      return {
+        total: 0,
+        paused_count: 0,
+        started: [],
+        failed: [],
+        run_id: '',
+        dry_run: opts.simulatedRunMs > 0,
+      };
+    }
+
+    const runId = randomUUID();
+    const startedAt = Date.now();
+    this.logRunEvent(runId, '*run', 'started', startedAt, `items=${items.length}`);
 
     const sched = new Scheduler({
       items,
@@ -115,19 +139,44 @@ export class RpcController {
     const started: string[] = [];
     const failed: string[] = [];
     sched.on('item-running', (e: { id: string }) => {
-      // 真起进程（用 spawn —— v0.3 改 child_process CreateProcessW）
       const item = items.find((i: StartupItemRow) => i.id === e.id);
-      if (item) {
-        try {
-          this.spawnItem(item);
-          started.push(e.id);
-        } catch (err) {
-          failed.push(`${e.id}: ${err instanceof Error ? err.message : String(err)}`);
-        }
+      if (!item) {
+        failed.push(`${e.id}: item vanished`);
+        this.logRunEvent(runId, e.id, 'missing', Date.now());
+        return;
+      }
+      // simulatedRunMs > 0 → 干跑（不真起进程）
+      if (opts.simulatedRunMs > 0) {
+        started.push(e.id);
+        this.logRunEvent(runId, e.id, 'simulated', Date.now(), `prio=${item.priority}`);
+        return;
+      }
+      try {
+        const r = spawnItem(item);
+        started.push(e.id);
+        this.logRunEvent(runId, e.id, 'started', Date.now(), `pid=${r.pid} prio=${r.priority}`);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        failed.push(`${e.id}: ${msg}`);
+        this.logRunEvent(runId, e.id, 'failed', Date.now(), msg);
       }
     });
     const r = await sched.run();
-    return { total: r.total, paused_count: r.paused_count, started, failed };
+    this.logRunEvent(
+      runId,
+      '*run',
+      'finished',
+      Date.now(),
+      `started=${started.length} failed=${failed.length} paused=${r.paused_count}`,
+    );
+    return {
+      total: r.total,
+      paused_count: r.paused_count,
+      started,
+      failed,
+      run_id: runId,
+      dry_run: opts.simulatedRunMs > 0,
+    };
   }
 
   private spawnItem(item: StartupItemRow): void {
@@ -137,10 +186,24 @@ export class RpcController {
       child.unref();
       return;
     }
-    // Windows：reg.exe 没现成 API 提优先级，spawn 后用 child.pid + SetPriorityClass
-    // v0.3 用 ffi-napi 调 SetPriorityClass；MVP 直接 spawn
-    const child = spawn(item.command, { detached: true, stdio: 'ignore', shell: false });
-    child.unref();
+    // 真起：走 scheduler-exec（处理 priority + Windows quirks）
+    spawnItem(item);
+  }
+
+  /** 写一行启动事件到本地 db（不依赖 core，daemon 自己负责） */
+  private logRunEvent(
+    runId: string,
+    itemId: string,
+    status: string,
+    ts: number,
+    detail = '',
+  ): void {
+    try {
+      const line = `${JSON.stringify({ t: ts, run: runId, item: itemId, status, detail })}\n`;
+      appendFileSync(join(this.ctx.config.dataDir, 'run_events.ndjson'), line, 'utf8');
+    } catch {
+      // 静默失败：log 错误不该 crash 调度
+    }
   }
 }
 

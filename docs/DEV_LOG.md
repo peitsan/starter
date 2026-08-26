@@ -5,9 +5,9 @@
 
 ## State (last 5 lines)
 
-- Batch 8 完成：packages/daemon/ 骨架（HTTP + Bearer token + node-windows 装 service） + 11 单测过
-- 全 monorepo 85/85 单测（core 62 + daemon 11 + cli 9 + mcp 3），typecheck/lint 0 错
-- 下一步：Batch 9 (Daemon 真启动调度) 等 Paxon 装 Rust 后做 Batch 10 (Tauri UI)
+- Batch 9 完成：真实启动调度（parseCommand + priority 0-5 + 真起 notepad 验证 PriorityClass=Idle）
+- 登录自启 schtasks ONLOGON + 23/23 daemon 单测 + 真机启 notepad 验过
+- 下一批：Batch 10 (Tauri UI，等 Paxon 装 Rust) 或先打 v0.2.0-alpha 包
 
 ## 根目录白名单
 

@@ -185,6 +185,27 @@ export async function runCli(argv: string[]): Promise<void> {
     else await stop();
     return;
   }
+  if (cmd === 'schedule-run' || cmd === 'schedule_run') {
+    // 单次跑：被 schtasks ONLOGON 触发
+    const config = loadConfig();
+    const { createController } = await import('./controller.js');
+    const ctrl = createController({ config });
+    const dryRun = process.env.STARTER_DRY_RUN === '1';
+    const r = await ctrl.handle('schedule_run', {
+      concurrent_max: 4,
+      simulated_ms: dryRun ? 3000 : 0,
+      tick_ms: 200,
+    });
+    process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
+    ctrl.close();
+    return;
+  }
+  if (cmd === 'register-logon' || cmd === 'unregister-logon') {
+    const m = await import('./service.js');
+    if (cmd === 'register-logon') m.registerLogonTask();
+    else m.unregisterLogonTask();
+    return;
+  }
   process.stderr.write(`unknown command: ${cmd}\n`);
   process.exit(2);
 }
