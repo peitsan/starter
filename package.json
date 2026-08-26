@@ -6,23 +6,20 @@
   "license": "MIT",
   "author": "Paxon",
   "engines": {
-    "node": ">=20.0.0 <23 || >=23.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
   },
-  "packageManager": "npm@10.9.3",
-  "workspaces": [
-    "packages/*"
-  ],
+  "packageManager": "pnpm@9.12.3",
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "pnpm -r run build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test --workspaces --if-present",
-    "test:coverage": "npm run test:coverage --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
+    "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test:coverage",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r run clean && rimraf node_modules",
     "prepare": "husky || true",
     "commit": "git-cz",
     "release": "release-it",
@@ -31,8 +28,11 @@
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/js": "10.0.1",
     "@release-it/conventional-changelog": "^8.0.1",
     "@types/node": "^22.7.5",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.10.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.13.0",
@@ -57,7 +57,7 @@
   },
   "release-it": {
     "git": {
-      "requireBranch": "main",
+      "requireBranch": "master",
       "requireCleanWorkingDir": true,
       "requireCommits": true,
       "commitMessage": "chore(release): v${version}",

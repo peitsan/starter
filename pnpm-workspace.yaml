@@ -1,0 +1,10 @@
+# pnpm workspace config — https://pnpm.io/pnpm-workspace_yaml
+packages:
+  - 'packages/*'
+  # Native side (planned)
+  # - 'native/*'
+  # React Native UI (planned)
+  # - 'ui'
+
+# Recursive commands (pnpm -r) only run on these
+onlyBuiltDependencies: []

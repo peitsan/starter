@@ -9,7 +9,11 @@
   "bin": {
     "starter": "./dist/index.js"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
@@ -18,8 +22,8 @@
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@starter/core": "*",
-    "@starter/ipc-client": "*",
+    "@starter/core": "workspace:*",
+    "@starter/ipc-client": "workspace:*",
     "commander": "^12.1.0"
   },
   "devDependencies": {

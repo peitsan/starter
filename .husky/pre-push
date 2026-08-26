@@ -2,4 +2,8 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # 推送前跑一次 typecheck（轻量闸门，不跑全测试）
-npm run typecheck
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm run -r typecheck
+else
+  npm run typecheck
+fi

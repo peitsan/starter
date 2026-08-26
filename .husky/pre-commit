@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# 触发 lint-staged，对暂存文件做 prettier + eslint
-npx lint-staged
+# pnpm: use dlx to run lint-staged; fallback to npx if not in pnpm
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm exec lint-staged
+else
+  npx --no -- lint-staged
+fi

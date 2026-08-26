@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "@starter/cli": "*",
-    "@starter/core": "*"
+    "@starter/cli": "workspace:*",
+    "@starter/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
