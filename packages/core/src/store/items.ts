@@ -100,34 +100,33 @@ export class ItemRepository {
 
   list(filter: StartupItemFilter = {}): StartupItemRow[] {
     const where: string[] = [];
-    const params: Record<string, unknown> = {};
+    const positional: unknown[] = [];
     if (filter.enabled !== undefined) {
-      where.push('enabled = @enabled');
-      params.enabled = filter.enabled ? 1 : 0;
+      where.push('enabled = ?');
+      positional.push(filter.enabled ? 1 : 0);
     }
     if (filter.source) {
-      where.push('source = @source');
-      params.source = filter.source;
+      where.push('source = ?');
+      positional.push(filter.source);
     }
     if (filter.risk) {
-      where.push('risk = @risk');
-      params.risk = filter.risk;
+      where.push('risk = ?');
+      positional.push(filter.risk);
     }
     if (filter.search) {
-      // INSTR 比 LIKE 更可靠；用普通字符串包含（大小写不敏感）
+      // 字符串搜索走应用层（避免 better-sqlite3 LIKE 参数化 quirk）
       const needle = filter.search.toLowerCase();
-      // 编译期把 needle 拷进闭包，再做 toLowerCase
       const all = this.db
-        .prepare<[], StartupItemRow>(
+        .prepare<unknown[], StartupItemRow>(
           `SELECT * FROM startup_item ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY source, name`,
         )
-        .all() as StartupItemRow[];
+        .all(...positional) as StartupItemRow[];
       return all.filter(
         (r) => r.name.toLowerCase().includes(needle) || r.command.toLowerCase().includes(needle),
       );
     }
     const sql = `SELECT * FROM startup_item ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY source, name`;
-    return this.db.prepare<typeof params, StartupItemRow>(sql).all(params) as StartupItemRow[];
+    return this.db.prepare<unknown[], StartupItemRow>(sql).all(...positional) as StartupItemRow[];
   }
 
   get(id: string): StartupItemRow | null {

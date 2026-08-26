@@ -5,10 +5,10 @@
 
 ## State (last 5 lines)
 
-- Batch 5 完成：F3-F6 调度引擎跑通（dag + io watchdog + scheduler）
-- 真机测：35 项并发 4 跑，IO watchdog 生效（typeperf + watchdog + scheduler）
-- 62 单测全过；scheduler 测试耗时最长
-- 下一批：Batch 6 — MCP Server（暴露 5 tool + 1 resource + 1 prompt）
+- Batch 6 完成：MCP Server (5 tool + 1 resource + 1 prompt) 真机跑通
+- JSON-RPC over stdio；Cursor/Claude Desktop 可一键接入
+- 顺手修 better-sqlite3 list 的 named-param bug（改 positional `?`）
+- 下一批：Batch 7 — release v0.1.0 + GitHub release + 收尾
 
 ## 根目录白名单
 
