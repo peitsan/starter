@@ -12,6 +12,8 @@ package-lock.json.bak
 
 # ===== Build artifacts =====
 dist/
+# UI 前端是手写 vanilla JS 源码，存放于 packages/ui/dist（无独立 src 构建步骤），必须入库
+!packages/ui/dist/
 build/
 out/
 *.tsbuildinfo

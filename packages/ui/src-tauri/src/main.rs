@@ -1,12 +1,15 @@
 // Starter UI — Tauri main
 //
 // 架构：
-//   - 单 WebView2 窗口（启动隐藏��靠系统托盘）
+//   - 单 WebView2 窗口（启动隐藏靠系统托盘）
 //   - 前端通过 Tauri invoke 调下面这些 commands
 //   - commands 内部走 HTTP 调 Daemon（127.00.1:7811, Bearer token）
 //
 // Daemon 地址 + token 从 %ProgramData%\Starter\auth.token 读
 //（如果 Daemon 未运行，UI 提示用户启动）
+
+// 以 Windows GUI 子系统运行（不弹控制台窗口）
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -279,15 +282,23 @@ fn main() {
                 })
                 .build(app)?;
 
-            // 启动时主窗隐藏，靠用户点托盘显示
-            // 除非 STARTER_UI_VISIBLE=1（debug / preview）
-            if std::env::var("STARTER_UI_VISIBLE").as_deref() != Ok("1") {
+            // 默认显示主窗口；STARTER_UI_HIDDEN=1 时隐藏到托盘（无头模式）
+            if std::env::var("STARTER_UI_HIDDEN").as_deref() == Ok("1") {
                 if let Some(w) = app.get_webview_window("main") {
                     let _ = w.hide();
                 }
             } else if let Some(w) = app.get_webview_window("main") {
                 let _ = w.show();
                 let _ = w.set_focus();
+            }
+
+            // Mica 亚克力材质（Win11 22000+；跟随系统深色模式）
+            if let Some(w) = app.get_webview_window("main") {
+                #[cfg(target_os = "windows")]
+                if window_vibrancy::apply_mica(&w, None).is_err() {
+                    // 非 Win11 回退到 acrylic
+                    let _ = window_vibrancy::apply_acrylic(&w, None);
+                }
             }
 
             Ok(())
