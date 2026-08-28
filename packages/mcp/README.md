@@ -22,4 +22,4 @@ node dist/index.js              # 默认 stdio 传输
 }
 ```
 
-详细 schema 见根目录 `docs/PRD.md` 附录 A。
+详细 schema 见根目录 [`docs/content/human/prd.md`](../../docs/content/human/prd.md) 附录 A。

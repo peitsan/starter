@@ -187,7 +187,7 @@ case 'disable_startup_item': {
 }
 ```
 
-Agent 端规范（写到 `docs/AGENT_API.md`）：
+Agent 端规范（写到 `docs/content/agent/api.md`）：
 1. 首次调用不带 `yes` → server 返回 `require_yes: true` + `preview`
 2. Agent 把 preview 展示给用户 / 自己做判断
 3. 再次调用带 `yes: true` → 执行
@@ -448,9 +448,9 @@ $ opencode
 
 ## 11. 参考 (References)
 
-- PRD：`docs/PRD.md`（F1–F12、附录 A CLI/MCP）
-- MRD：`docs/MRD.md`
-- 审计追踪矩阵：`docs/audit-traceability.csv`
+- PRD：`docs/content/human/prd.md`（F1–F12、附录 A CLI/MCP）
+- MRD：`docs/content/human/mrd.md`
+- 审计追踪矩阵：`docs/audit-traceability.csv`（生成物，不入库）
 - OpenCode：<https://opencode.ai>（sst 出品，开源 AI 编码 CLI）
 - MCP 规范：<https://modelcontextprotocol.io/>
 

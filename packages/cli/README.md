@@ -2,7 +2,7 @@
 
 > 命令行入口。`starter scan / list / enable / set-delay / serve-mcp ...`
 
-详细命令清单见仓库根 `docs/PRD.md` 附录 A。
+详细命令清单见仓库根 [`docs/content/human/prd.md`](../../docs/content/human/prd.md) 附录 A。
 
 ## 开发
 

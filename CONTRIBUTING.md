@@ -75,7 +75,7 @@ npm install
                           #   5. 推 master + tag
                           #   6. 创建 GitHub Release（draft）
   ```
-- 完整流程见 [`docs/PRD.md` §11 发布计划](docs/PRD.md)。
+- 完整流程见 [`docs/content/human/prd.md` §11 发布计划](docs/content/human/prd.md)。
 
 ## 7. 代码规范
 

@@ -7,7 +7,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
 [![Release: release-it](https://img.shields.io/badge/Release-release--it-orange)](https://github.com/release-it/release-it)
 
-> 🤖 **AI agent / LLM user?** Read [`docs/AGENT_GUIDE.md`](docs/AGENT_GUIDE.md) instead — it's a 30-second quick start written for LLM agents (MCP tools, common scenarios, error codes).
+> 🤖 **AI agent / LLM user?** Read the [**Agent Guide**](docs/content/agent/guide.md) instead — it's a quick start written for LLM agents (MCP tools, common scenarios, error codes).
 > 🌍 **Human-friendly docs** (this README, MRD, PRD, dev log) are auto-published at **<https://peitsan.github.io/starter/>** via GitHub Pages.
 
 Starter 是一个 **Windows 启动项管理软件**。与系统自带的「任务管理器 → 启动」相比，它能解决 3 类
@@ -62,8 +62,11 @@ Starter 是一个 **Windows 启动项管理软件**。与系统自带的「任�
 ```
 .
 ├── docs/
-│   ├── MRD.md          # 市场需求文档
-│   └── PRD.md          # 产品需求文档（含 CLI & MCP 附录）
+│   ├── index.html       # 文档站（SPA：#/human/… 人类版、#/agent/… Agent 版）
+│   ├── content/         # 文档站内容源（human/ + agent/）
+│   │   ├── human/       # PRD/MRD/手册/CLI/MCP/开发日志等
+│   │   └── agent/       # Agent 指南/工具一览/MCP API/错误码等
+│   └── archive/         # 历史文档（审计报告/RFC/旧计划等）
 ├── packages/
 │   ├── core/           # 领域模型、SQLite、调度引擎（DAG + IO watchdog）
 │   ├── cli/            # starter 命令行入口
@@ -100,7 +103,7 @@ npm -w @starter/mcp run build
 node packages/mcp/dist/index.js
 ```
 
-更多命令、配置项、故障排查见 `docs/PRD.md` 附录 A。
+更多命令、配置项、故障排查见 [`docs/content/human/prd.md`](docs/content/human/prd.md) 附录 A。
 
 ## 🤖 接入 LLM Agent
 
@@ -142,7 +145,7 @@ Agent 会自己调 `scan_startup_items` → 分析 → `set_delay` → `add_depe
 - [ ] **v0.3.0** F8 进程优先级
 - [ ] **v1.0.0** 计划任务/服务扫描、UI 打磨、代码签名
 
-详见 [`docs/PRD.md`](docs/PRD.md) 与 [`docs/SYSTEM_MANUAL.md`](docs/SYSTEM_MANUAL.md)。
+详见 [`docs/content/human/prd.md`](docs/content/human/prd.md) 与 [`docs/content/human/system-manual.md`](docs/content/human/system-manual.md)。
 
 ## 🙏 致谢
 

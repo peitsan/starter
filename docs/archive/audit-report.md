@@ -140,7 +140,7 @@ packages/
 
 ## 7. 审计产物
 
-- 本报告：`docs/AUDIT_REPORT.md`
-- 系统手册：`docs/SYSTEM_MANUAL.md`（文档站版 `docs/content/human/system-manual.md`）
-- 开发手册：`docs/DEVELOPER_MANUAL.md`（文档站版 `docs/content/human/developer-manual.md`）
+- 本报告：`docs/archive/audit-report.md`
+- 系统手册：`docs/content/human/system-manual.md`
+- 开发手册：`docs/content/human/developer-manual.md`
 - 文档站导航已同步（`docs/assets/app.js` MANIFEST）

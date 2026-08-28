@@ -129,7 +129,7 @@ CLI 与 MCP 从 `@starter/core` 导入同一份定义，只做「参数解析 + 
    - 写操作走 `requireYes(args, preview)` + `writeViaDaemon(method, params, local)`。
 3. **catalog**：把名字加进 `mcp/src/catalog.ts`（测试会校验数量）。
 4. **测试**：`mcp/tests/server.test.ts` / `core/tests/*` 补 case；跑 `pnpm -w @starter/mcp run test`。
-5. **文档**：更新 `docs/AGENT_API.md` + 文档站 `content/agent/*`。
+5. **文档**：更新文档站 `content/agent/*`（工具表 / API / 资源）、`content/human/dev-log.md`。
 
 > 同理，CLI 新命令 = registry 定义 + `cli/src/commands.ts` 注册 + 文档。
 
@@ -181,4 +181,4 @@ CLI 与 MCP 从 `@starter/core` 导入同一份定义，只做「参数解析 + 
 - [ ] 统一 run 时间线来源（SQLite vs ndjson 二选一）
 - [ ] UI 深度集成（Tauri 调 daemon RPC）
 
-详见 `docs/PRD.md`、`docs/RFC-001-ai-agent-integration.md`、`docs/AUDIT_REPORT.md`。
+详见 `content/human/prd.md`、`../archive/rfc-001-ai-agent-integration.md`、`../archive/audit-report.md`。
